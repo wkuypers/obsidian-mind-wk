@@ -62,3 +62,5 @@ node_modules/
 # plumbing, created when absent. The glob also covers the `.tmp` sibling it is
 # created through, which a crash between write and claim can leave behind.
 .claude/om-mcp-no-mcp.json*
+
+# --- Changements locaux : exclusions propres au coffre, sous cette ligne ---

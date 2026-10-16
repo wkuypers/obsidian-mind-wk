@@ -166,3 +166,7 @@ Full setup, which notes the server serves, and the required repo-side snippet: `
 2. **`/om-peer-scan`** (if needed) — understand what teammates have already built
 3. Create work note from gathered context
 4. **`/om-vault-audit`** — ensure everything links properly
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->

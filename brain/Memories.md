@@ -19,3 +19,7 @@ Persistent context and knowledge retained across sessions. Each topic lives in i
 ## Recent Context
 
 -
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->

@@ -54,3 +54,7 @@ Incident docs live in `work/incidents/`. See `Incidents.base` for overview.
 ## Archive
 
 -
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->

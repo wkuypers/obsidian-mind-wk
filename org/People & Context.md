@@ -40,3 +40,7 @@ Individual notes in `org/people/`:
 ## Recurring Growth Themes
 
 -
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->

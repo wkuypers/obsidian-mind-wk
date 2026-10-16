@@ -52,3 +52,7 @@ Record when focus changes, with date and reason.
 | Date | Shift | Reason |
 |------|-------|--------|
 |      | Created North Star | Initial setup |
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->

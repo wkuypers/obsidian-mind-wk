@@ -21,3 +21,7 @@ A running log of impact, wins, and growth. Each quarter is its own note — open
 - Competency evidence links both the competency and the work note
 - Review prep: open the quarter(s) covered by the review period, follow the links
 - Backlinks from quarterly notes accumulate on competency notes and work notes automatically
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->
