@@ -521,12 +521,17 @@ export function stripFrontmatter(content: string): string {
 
 /**
  * True if the body contains at least one list item with text content —
- * i.e. a bullet like `- foo`, not a bare `-` placeholder. Brain topic
- * notes are list-shaped by template, so this is the clearest signal of
- * "has the user actually added anything here yet?"
+ * a bullet like `- foo` or an ordered item like `1. foo`, not a bare `-`
+ * placeholder. Brain topic notes are list-shaped by template, so this is
+ * the clearest signal of "has the user actually added anything here yet?"
+ *
+ * Ordered items count because a note can outgrow the bullet template
+ * entirely: a topic note written as numbered procedures carries no bullet
+ * at all, and a bullet-only test reports it empty — which tells every
+ * session to skip a note that is in fact the densest one in `brain/`.
  */
 export function hasBrainContent(body: string): boolean {
-	return /^[ \t]*[-*+][ \t]+\S.*$/m.test(body);
+	return /^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\S.*$/m.test(body);
 }
 
 /**

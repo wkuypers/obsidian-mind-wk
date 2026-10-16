@@ -536,6 +536,22 @@ describe("hasBrainContent", () => {
 	test("false for prose-only content with no bullets", () => {
 		assert.equal(hasBrainContent("Just a paragraph of prose.\n"), false);
 	});
+	test("true for ordered list items", () => {
+		assert.equal(hasBrainContent("1. first step\n"), true);
+		assert.equal(hasBrainContent("2) second step\n"), true);
+		assert.equal(hasBrainContent("  10. nested step\n"), true);
+	});
+	test("false for a bare ordered-list placeholder", () => {
+		assert.equal(hasBrainContent("\n# Patterns\n\nSome intro.\n\n1.\n"), false);
+	});
+	test("true for a note written only as numbered procedures", () => {
+		const body =
+			"\n# Patterns\n\nRecurring patterns.\n\n" +
+			"## Fichier binaire versé → fiches en clair\n\n" +
+			"1. **Inventorier avant de lire.** Taille, onglets, lignes.\n" +
+			"2. **Trouver la table de faits et n'utiliser qu'elle.**\n";
+		assert.equal(hasBrainContent(body), true);
+	});
 });
 
 describe("parseQmdIndex", () => {
