@@ -56,6 +56,7 @@ Custom slash commands, subagents, and reusable workflows. Defined in `.claude/co
 | `/om-vault-upgrade` | Upgrade this vault through ShardMind, keeping local improvements and listing them as upstream candidates; or import content from an existing vault — detects version, classifies notes, transforms frontmatter, rebuilds indexes |
 | `/om-project-archive` | Move completed project from `work/active/` to `work/archive/YYYY/`, update all indexes — moves whole `active/<Topic>/` clusters intact |
 | `/om-tidy` | Self-maintenance pass — acts on every hygiene flag: archives completed work, groups clusters, splits oversized notes, reports open loops. Never deletes, never commits |
+| `/om-history` | Read this vault's past conversations, find the corrections the user had to give, check each against `brain/` rules, report findings then proposals. Writes nothing |
 
 ## Usage Notes
 
