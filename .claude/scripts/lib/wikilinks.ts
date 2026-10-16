@@ -41,6 +41,14 @@ const ASSET_EXTENSIONS = new Set([
 	"mp4",
 	"mov",
 	"zip",
+	"doc",
+	"docx",
+	"xls",
+	"xlsx",
+	"xlsm",
+	"ppt",
+	"pptx",
+	"csv",
 ]);
 
 /**
@@ -237,6 +245,11 @@ export function extractAliases(content: string): string[] {
 
 const stripMdExt = (p: string): string => p.replace(/\.md$/i, "");
 
+// macOS/iCloud stores accented filenames as NFD while editors type links as NFC,
+// so the same name compares unequal byte-wise. Obsidian's own resolver normalizes;
+// matching that here keeps accented links from reporting as broken.
+const fold = (s: string): string => s.normalize("NFC").toLowerCase();
+
 /** POSIX-normalize `dir/../x` style paths; returns null when escaping root. */
 function normalizeRelative(path: string): string | null {
 	const parts: string[] = [];
@@ -264,25 +277,21 @@ export function buildResolver(
 	files: readonly string[],
 	aliasesByFile: ReadonlyMap<string, readonly string[]>,
 ): Resolver {
-	const pathSet = new Set(files.map((f) => stripMdExt(f).toLowerCase()));
+	const pathSet = new Set(files.map((f) => fold(stripMdExt(f))));
 	const basenames = new Set(
 		files.map((f) => {
 			const base = f.split("/").pop() ?? f;
-			return stripMdExt(base).toLowerCase();
+			return fold(stripMdExt(base));
 		}),
 	);
-	const aliases = new Set(
-		[...aliasesByFile.values()].flat().map((a) => a.toLowerCase()),
-	);
+	const aliases = new Set([...aliasesByFile.values()].flat().map(fold));
 
 	return (target: string, sourceRelPath: string): boolean => {
-		const clean = stripMdExt(target.replace(/\\/g, "/")).toLowerCase();
+		const clean = fold(stripMdExt(target.replace(/\\/g, "/")));
 
 		// Source-relative (./ or ../) — resolve against the source's dir.
 		if (clean.startsWith("./") || clean.startsWith("../")) {
-			const sourceDir = sourceRelPath
-				.replace(/\\/g, "/")
-				.toLowerCase()
+			const sourceDir = fold(sourceRelPath.replace(/\\/g, "/"))
 				.split("/")
 				.slice(0, -1)
 				.join("/");

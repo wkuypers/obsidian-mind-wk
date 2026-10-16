@@ -176,6 +176,26 @@ describe("buildResolver", () => {
 		assert.ok(resolves("obsidian-mind", "Home.md"));
 		assert.ok(resolves("inbound recruiter log", "Home.md"));
 	});
+
+	test("NFD filenames resolve against NFC wikilinks, and the reverse", () => {
+		// macOS/APFS returns filenames in NFD ("e" + U+0301); a wikilink typed
+		// in Obsidian is NFC (U+00E9). Compared raw these are different
+		// strings, and every accented link reports as broken. Both directions
+		// must fold to one key.
+		const NFD = "work/active/Re\u0301union d'e\u0301quipe — compte rendu.md";
+		const NFC = "Réunion d'équipe — compte rendu"; // U+00E9
+		assert.equal(NFD.normalize("NFC").includes("\u00e9"), true, "fixture is NFD");
+		const r = buildResolver([NFD], new Map());
+		assert.ok(r(NFC, "Home.md"), "NFC link → NFD file");
+		assert.ok(r("Re\u0301union d'e\u0301quipe — compte rendu", "Home.md"), "NFD link → NFD file");
+		// path form and aliases fold the same way
+		assert.ok(r("work/active/Réunion d'équipe — compte rendu", "Home.md"));
+		const rAlias = buildResolver(
+			["notes/x.md"],
+			new Map([["notes/x.md", ["Re\u0301union d'e\u0301quipe"]]]),
+		);
+		assert.ok(rAlias("Réunion d'équipe", "Home.md"), "NFC link → NFD alias");
+	});
 	test("path suffix match", () => {
 		assert.ok(resolves("obsidian-mind/README", "Home.md"));
 		assert.ok(resolves("projects/obsidian-mind/README", "Home.md"));
