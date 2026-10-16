@@ -84,7 +84,7 @@ Drafting before a final note? Read `.claude/rules/thinking.md`.
    - Agent operational context -- `brain/`
    - Codebase knowledge -- `reference/`
    - Drafts -- `thinking/`
-   - Vault root: `Home.md`, `AGENTS.md`, `vault-manifest.json`, `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`, `LICENSE`, `.gitignore`. No user notes at root.
+   - Vault root: `Home.md`, `AGENTS.md`, `vault-manifest.json`, `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`, `LICENSE`, `.gitignore`. No user notes at root.
 4. **Name files descriptively.** Use the note title as filename. **Date convention:** prefix **point-in-time** notes with a date — 1:1s (`<Person> YYYY-MM-DD.md`), dated captures, meeting exports. **Living and entity notes use a bare title** — work notes, person/team notes, competencies, `brain/`, `reference/`. *Why the split:* a creation-date prefix on a continuously-edited note **inverts the recency signal** (a living doc looks stale while being updated daily). For "what's most recent," use `bases/Recently Touched.base` (real modified time), never filename dates.
 5. **Group multi-note workstreams in a subfolder.** Once a workstream has more than one note, it gets a folder (`work/active/<Topic>/`; the archive mirrors the grouping). Folders are the lifecycle/context axis only — links remain the primary organization (wikilinks resolve by name across folders, so grouping never breaks links, QMD, or the graph). The hygiene scan and write-time cluster sensor flag candidates; `/om-project-archive` moves whole clusters.
 
