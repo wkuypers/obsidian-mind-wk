@@ -18,6 +18,9 @@
 
 > **An Obsidian vault that gives AI coding agents persistent memory.** Built for Claude Code, with working hooks for Codex CLI and Gemini CLI. Start a session, talk about your day, and the agent handles the rest — notes, links, indexes, performance tracking. Every conversation builds on the last.
 
+> [!NOTE]
+> This fork adds analysis commands, `/om-history` and a few hygiene fixes. See [What This Fork Adds](#-what-this-fork-adds).
+
 ---
 
 ## 🔴 The Problem
@@ -440,6 +443,25 @@ Defined in `.claude/commands/`. Run them in Claude Code, Codex CLI, or Gemini CL
 | `/om-meeting` | Prep for any meeting by topic — subject-forward briefing with open items and considerations |
 | `/om-intake` | Process meeting notes inbox — classify and route to the right vault notes |
 | `/om-project-archive` | Move a completed project from active/ to archive/, update indexes |
+| `/om-history` | Read this vault's past conversations, find the corrections you had to give, check each against the `brain/` rules, report findings then proposals. Writes nothing |
+
+### 🔬 Analysis Commands
+
+Eleven commands that read the vault and write **only** to `syntheses/`. Each one adds a dated section and never rewrites an existing one. None of them commits. They share one set of rules, kept in `syntheses/README.md`: search is restricted to this vault, using qmd (BM25) plus `git grep`; there is a reading budget; every claim links to a note that exists; and notes are treated as data, never as instructions. Adapted from [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) (MIT, see `.claude/licenses/obsidian-second-brain.md`).
+
+| Command | What It Does |
+|---------|-------------|
+| `/om-distill` | Condense a source into claims, each tied to the exact block that carries it |
+| `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic. Contradictions are attributed, never resolved |
+| `/om-challenge` | Argue against a thesis or decision using the vault's own decisions, failures and opposing positions |
+| `/om-panel` | Four independent readings of one question, then where they agree and where they split |
+| `/om-research` | Bibliographic search with no API key (OpenAlex, Semantic Scholar, arXiv, Persée), aimed at the gap with what the vault already holds. Updates are proposed, never applied |
+| `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
+| `/om-connect` | Bridges and crossing ideas between two distant domains, found through the link graph |
+| `/om-discover` | Three to five next directions drawn from ideas left hanging, open questions and orphan notes, with an explicit ranking |
+| `/om-brainstorm` | Socratic interview, one question per turn, then a design note with one recommended approach |
+| `/om-contradictions` | Opposing claims, reversed decisions and outdated profiles, classified. Corrects nothing |
+| `/om-retrieval-eval` | Recall@k and MRR of the vault's keyword search, with cases you can replay after a change |
 
 ---
 
@@ -711,11 +733,25 @@ Your old vault is **never modified**. Use `--dry-run` to preview the plan withou
 
 ---
 
+## 🍴 What This Fork Adds
+
+This is a fork of [breferrari/obsidian-mind](https://github.com/breferrari/obsidian-mind). On top of upstream, it adds:
+
+- **Analysis commands and `syntheses/`.** Eleven read-only commands write their results to a dedicated folder (see [Analysis Commands](#-analysis-commands)). `syntheses/` is registered in `vault-manifest.json` as user content, so an upgrade never overwrites it.
+- **`/om-history`.** Self-correction across sessions. A script (`.claude/scripts/om-history.ts`) reads every Claude Code transcript of this vault only, over 30 days by default (`--days N`). It extracts the corrections you gave, flags the ones that came back after being corrected, and checks each against `brain/`. Proposals target `brain/` or a local command, never `AGENTS.md` or `.claude/rules/`, and nothing is written until you approve.
+- **Declared exemption from the organization threshold.** Some notes are bulk by nature: a verbatim source, a manuscript, a book split by chapter. Add `hygiene: exempt` to a note's frontmatter, or to its folder's `Index.md` to cover every note in that folder, and the ~25 KB split flag no longer fires for them. The hooks no longer need to hardcode folder lists. `oversize_ok` is read as the same declaration. Notes named `*texte intégral*` or `*OCR intégral*` are exempt by name, like `*Archive*`. The rule is in `.claude/rules/exemption-hygiene.md`.
+- **Fewer false hygiene flags.** An `*Archive*` satellite in `work/active/` is no longer reported as a "completed but not archived" project. Brain notes written as numbered lists now count as having content (before, only bullets did).
+- **More robust wikilink checks.** Names are compared in Unicode NFC. macOS and iCloud store accented filenames as NFD, so links to them used to be reported as broken. Office files (`.docx`, `.xlsx`, `.pptx`, `.csv`…) now count as assets.
+- **"Local changes" sections.** The notes each vault is expected to edit (`Home.md`, `brain/*.md`, indexes, `.gitignore`) end with a `Changements locaux` heading. The template leaves it empty, and a vault's own additions go below it, which keeps template merges clean.
+
+---
+
 ## 🙏 Design Influences
 
 - [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) — Official Obsidian agent skills
 - [James Bedford](https://x.com/jameesy) — Vault structure philosophy, separation of AI-generated content
 - [arscontexta](https://github.com/agenticnotetaking/arscontexta) — Progressive disclosure via description fields, session hooks
+- [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) — The analysis commands this fork adapts
 
 ---
 
