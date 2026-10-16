@@ -30,6 +30,7 @@ import {
 	formatMonolithHint,
 	namesCapped,
 	isMonolithExempt,
+	isMonolithExemptNote,
 	newNoteClusterCandidate,
 	parseMemoryRoot,
 	parseOpenLoopConfig,
@@ -526,9 +527,64 @@ describe("write-time detectors", () => {
 		assert.match(mono, /42KB/);
 	});
 
-	test("isMonolithExempt covers Archive names only", () => {
+	test("isMonolithExempt covers Archive and full-text (texte/OCR intégral) names", () => {
 		assert.equal(isMonolithExempt("Delivery Log Archive.md"), true);
 		assert.equal(isMonolithExempt("Delivery Log.md"), false);
+		assert.equal(isMonolithExempt("Correspondance — texte intégral.md"), true);
+		// NFD form (macOS filesystem): é decomposed into e + combining accent
+		assert.equal(isMonolithExempt("Registre (OCR inte\u0301gral).md"), true);
+		// a bare "intégrale" is an analysis note, not a source dump — keeps flagging
+		assert.equal(isMonolithExempt("Relecture intégrale (synthèse).md"), false);
+	});
+
+	test("an *Archive* satellite in active/ is not a completed-project flag", () => {
+		// Convention: an archive satellite lives BESIDE its live note, so it
+		// stays in active/ by design. Flagging it would be permanent noise.
+		writeAged("work/active/Delivery Log Archive.md", "---\nstatus: archived\n---\nbulk\n", 1);
+		const r = scanActiveHygiene(ROOT, NOW, DEFAULTS);
+		assert.ok(
+			!r.completedInActive.some((p) => p.includes("Archive")),
+			"archive satellites must not appear as completed-in-active",
+		);
+	});
+
+	test("isMonolithExemptNote honours a DECLARED exemption, on the note or its dossier", () => {
+		const fm = (extra: string) => `---\ndate: 2026-07-28\n${extra}---\n\nbody\n`;
+		mkdirSync(join(ROOT, "src-dossier"), { recursive: true });
+		mkdirSync(join(ROOT, "plain-dossier"), { recursive: true });
+		// dossier-level: one declaration on Index.md covers every note inside,
+		// which is what a book split by chapter needs (no renaming, no list in code)
+		writeFileSync(join(ROOT, "src-dossier/Index.md"), fm("hygiene: exempt\n"));
+		writeFileSync(join(ROOT, "src-dossier/13 — Chapitre treize.md"), fm(""));
+		assert.equal(isMonolithExemptNote(ROOT, "src-dossier/13 — Chapitre treize.md"), true);
+		// note-level: a manuscript declares for itself
+		writeFileSync(join(ROOT, "plain-dossier/Manuscrit v2.md"), fm("hygiene: exempt\n"));
+		assert.equal(isMonolithExemptNote(ROOT, "plain-dossier/Manuscrit v2.md"), true);
+		// neither → still flags; an undeclared sibling of a declared note too
+		writeFileSync(join(ROOT, "plain-dossier/Analyse.md"), fm(""));
+		assert.equal(isMonolithExemptNote(ROOT, "plain-dossier/Analyse.md"), false);
+		// content may be passed in (validate-write already has it) — no I/O needed
+		assert.equal(
+			isMonolithExemptNote(ROOT, "nowhere/Note.md", fm("hygiene: exempt\n")),
+			true,
+		);
+		// a value other than `exempt` is not an exemption
+		assert.equal(
+			isMonolithExemptNote(ROOT, "nowhere/Other.md", fm("hygiene: watch\n")),
+			false,
+		);
+	});
+
+	test("isMonolithExemptNote reads `oversize_ok` as the same declaration", () => {
+		const fm = (extra: string) => `---\ndate: 2026-08-12\n${extra}---\n\nbody\n`;
+		const at = (name: string, extra: string) =>
+			isMonolithExemptNote(ROOT, `nowhere/${name}.md`, fm(extra));
+		assert.equal(at("Yes", "oversize_ok: true\n"), true);
+		// a motive written in place of `true` still exempts, and stays visible
+		assert.equal(at("Reason", 'oversize_ok: "log chronologique"\n'), true);
+		assert.equal(at("No", "oversize_ok: false\n"), false);
+		assert.equal(at("Zero", "oversize_ok: 0\n"), false);
+		assert.equal(at("Absent", ""), false);
 	});
 });
 

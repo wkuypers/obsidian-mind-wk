@@ -323,14 +323,99 @@ function findOpenLoops(
 
 export const MONOLITH_BYTES = 25_000;
 
-/** Archive notes are bulk by design — the only exemption. */
+/**
+ * Archive notes are bulk by design; so are full-text source notes ("texte
+ * intégral" / "OCR intégral" in the name) — an author's complete text is one
+ * source, splitting it would destroy its function. NFC-normalize before matching: macOS filenames arrive NFD.
+ */
 export function isMonolithExempt(filename: string): boolean {
-	return filename.includes("Archive");
+	const name = filename.normalize("NFC");
+	// "texte intégral" / "OCR intégral" only — a bare "intégrale" (re-synthèse,
+	// relecture…) is an analysis note and must keep flagging.
+	return name.includes("Archive") || /(texte|ocr)s? int[ée]gra(l|ux)/i.test(name);
+}
+
+/**
+ * DECLARED exemption — the answer to "always settle size the same way".
+ * The filename rule above only reaches notes whose
+ * title happens to say "texte intégral"; a source dossier whose notes are
+ * named by chapter (`13 — Chapitre treize.md`)
+ * was flagged forever, and the only fixes on offer were renaming ~90 files
+ * or hardcoding a folder list here — a list that would silently rot
+ * (Write-Correctness law 6).
+ *
+ * So the exemption is DECLARED in frontmatter instead, and read at two
+ * granularities:
+ *   - `hygiene: exempt` on the note itself — one manuscript, one source text;
+ *   - `hygiene: exempt` on the dossier's `Index.md` — covers every note in
+ *     that folder, which is what a book-split-by-chapter dossier wants.
+ *
+ * Declaring it in frontmatter (not in a filename, not in this file) keeps it
+ * visible in Obsidian, greppable, and owned by the note rather than the hook.
+ * Bulk-by-design is a property of the content, so the content states it.
+ *
+ * `oversize_ok` is read as the same declaration, under the name some vaults
+ * already use. Any value other than a falsy one counts, so a motive may be
+ * written in place of `true` (`oversize_ok: "log chronologique"`) — a marker
+ * that carries its reason should not fail silently.
+ */
+const EXEMPT_DECL = "exempt";
+
+function declaresExempt(content: string): boolean {
+	if (extractFrontmatterField(content, "hygiene")?.trim() === EXEMPT_DECL) return true;
+	const ok = extractFrontmatterField(content, "oversize_ok");
+	if (ok === null || ok === undefined) return false;
+	return !/^(false|no|0|)$/i.test(ok.trim().replace(/^["']|["']$/g, ""));
+}
+
+const dossierExemptCache = new Map<string, boolean>();
+
+function dossierDeclaresExempt(root: string, relDir: string): boolean {
+	const cached = dossierExemptCache.get(relDir);
+	if (cached !== undefined) return cached;
+	let declared = false;
+	try {
+		declared = declaresExempt(
+			readFileSync(join(root, relDir, "Index.md"), "utf-8"),
+		);
+	} catch {
+		/* no Index.md, or unreadable → not declared */
+	}
+	dossierExemptCache.set(relDir, declared);
+	return declared;
+}
+
+/**
+ * Full exemption test for a note at `relPath` (vault-relative, forward
+ * slashes). Filename rule first (cheapest, no I/O), then the note's own
+ * declaration, then its dossier's. `content` may be passed when the caller
+ * already has it — validate-write does, the hook walker does not.
+ */
+export function isMonolithExemptNote(
+	root: string,
+	relPath: string,
+	content?: string,
+): boolean {
+	const slash = relPath.lastIndexOf("/");
+	const filename = slash === -1 ? relPath : relPath.slice(slash + 1);
+	if (isMonolithExempt(filename)) return true;
+	let text = content;
+	if (text === undefined) {
+		try {
+			text = readFileSync(join(root, relPath), "utf-8");
+		} catch {
+			return false;
+		}
+	}
+	if (declaresExempt(text)) return true;
+	return slash === -1 ? false : dossierDeclaresExempt(root, relPath.slice(0, slash));
 }
 
 // Never walked for oversize: machinery (shared with the SessionStart
 // listing, so the two can't drift — see MACHINERY_DIRS) plus `templates/`,
-// whose files are scaffold rather than notes.
+// whose files are scaffold rather than notes. A vault folder of bulk-by-design
+// notes declares itself instead (`hygiene: exempt`, see isMonolithExemptNote)
+// rather than being listed here.
 const OVERSIZE_SKIP_DIRS = new Set([...MACHINERY_DIRS, "templates"]);
 
 // Recursively collect .md files under a directory, returning paths relative
@@ -355,6 +440,11 @@ export function walkMarkdown(root: string, relDir: string): string[] {
 function findCompletedInActive(root: string): string[] {
 	const found: string[] = [];
 	for (const rel of walkMarkdown(root, ACTIVE_REL)) {
+		// An *Archive* satellite is not a project: convention puts it BESIDE
+		// its live note, so it legitimately sits in active/ forever. Without
+		// this skip, every archive split produces a permanent false "completed
+		// but not archived" flag.
+		if (rel.split("/").pop()?.includes("Archive")) continue;
 		let content: string;
 		try {
 			content = readFileSync(join(root, rel), "utf-8");
@@ -448,14 +538,18 @@ function findOversizedNotes(
 						loadsAsRetiredInstructionFile(root, e.name))
 				)
 					continue;
+				let size: number;
 				try {
-					const size = statSync(join(root, rel)).size;
-					if (size >= MONOLITH_BYTES) {
-						out.push({ path: rel, sizeKb: Math.round(size / 1000) });
-					}
+					size = statSync(join(root, rel)).size;
 				} catch {
-					/* unreadable → skip */
+					continue; /* unreadable → skip */
 				}
+				if (size < MONOLITH_BYTES) continue;
+				// Declared exemption costs a full read, so it is tested only
+				// for files that would otherwise flag — on a vault of this
+				// size, checking every note would be the expensive order.
+				if (isMonolithExemptNote(root, rel)) continue;
+				out.push({ path: rel, sizeKb: Math.round(size / 1000) });
 			}
 		}
 	}

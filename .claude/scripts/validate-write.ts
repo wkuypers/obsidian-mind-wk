@@ -28,7 +28,7 @@ import {
 	MONOLITH_BYTES,
 	formatClusterHint,
 	formatMonolithHint,
-	isMonolithExempt,
+	isMonolithExemptNote,
 	newNoteClusterCandidate,
 } from "./lib/active-hygiene.ts";
 import {
@@ -201,10 +201,10 @@ if (warnings.length > 0) {
 // edit inside one can't kill the sibling checks in the same write.
 try {
 	const size = statSync(filePath).size;
-	if (
-		size >= MONOLITH_BYTES &&
-		!isMonolithExempt(basename(filePathFwd))
-	) {
+	// Same exemption model as the scan hooks: filename rule OR a `hygiene:
+	// exempt` declaration on the note or on its dossier's Index.md. Pass the
+	// content we already read so the note's own declaration costs no I/O.
+	if (size >= MONOLITH_BYTES && !isMonolithExemptNote(vaultRoot, relPath, content)) {
 		blocks.push(formatMonolithHint(relPath, size));
 		policyResults.push({
 			policy_id: "organization-threshold",
