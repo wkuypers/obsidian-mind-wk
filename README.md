@@ -541,12 +541,13 @@ brain/
   Skills.md             Custom workflows and slash commands
 
 reference/              Codebase knowledge, architecture maps, flow docs
+syntheses/              Output of the analysis commands — dated sections, never rewritten
 thinking/               Scratchpad for drafts — promote findings, then delete
 templates/              Obsidian templates with YAML frontmatter
 
 .claude/
   rules/                Claude Code-only guidance, loaded beside AGENTS.md
-  commands/             20 slash commands
+  commands/             32 slash commands
   agents/               10 subagents
   scripts/              Hook scripts + charcount.ts utility
   skills/               Obsidian + QMD skills, and the obsidian-mind mod

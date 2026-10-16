@@ -27,6 +27,7 @@ Personal Obsidian vault -- an external brain for work notes, decisions, performa
 | `org/people/` | Atomic person notes | One note per person |
 | `org/teams/` | Team notes as graph nodes | One note per team |
 | `reference/` | Codebase knowledge, architecture maps | Flow docs, architecture docs |
+| `syntheses/` | Output of the analysis commands (`/om-synthesize`, `/om-distill`…) -- appended, never rewritten | Rules in `syntheses/README.md` |
 | `thinking/` | Scratchpad for drafts and reasoning | Named `YYYY-MM-DD-topic.md` |
 | `templates/` | Obsidian templates | `Work Note.md`, `Decision Record.md`, etc. |
 

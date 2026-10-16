@@ -58,6 +58,24 @@ Custom slash commands, subagents, and reusable workflows. Defined in `.claude/co
 | `/om-tidy` | Self-maintenance pass — acts on every hygiene flag: archives completed work, groups clusters, splits oversized notes, reports open loops. Never deletes, never commits |
 | `/om-history` | Read this vault's past conversations, find the corrections the user had to give, check each against `brain/` rules, report findings then proposals. Writes nothing |
 
+### Analysis & Synthesis
+
+Read the vault, write only to `syntheses/` — dated sections appended, never a rewrite, never a commit. Shared rules (vault-only search through qmd and git grep, reading budget, file naming): `syntheses/README.md`. Adapted from [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) (MIT).
+
+| Command | Purpose |
+|---------|---------|
+| `/om-distill` | Condense a source into claims, each tied to the exact block that carries it |
+| `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic — contradictions attributed, never resolved |
+| `/om-challenge` | Argue against a thesis or decision from the vault's own decisions, failures and opposing positions |
+| `/om-panel` | Four independent readings of a question, then where they agree and split |
+| `/om-research` | Key-less bibliographic search (OpenAlex, Semantic Scholar, arXiv, Persée) for the gap with what the vault holds; updates proposed, never applied |
+| `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
+| `/om-connect` | Bridges and crossing ideas between two distant domains, through the link graph |
+| `/om-discover` | Three to five next directions from ideas left hanging, open questions and orphan notes, with a stated ranking |
+| `/om-brainstorm` | Socratic interview, one question per turn, then a design note with one recommended approach |
+| `/om-contradictions` | Opposing claims, reversed decisions and outdated profiles, classified — corrects nothing |
+| `/om-retrieval-eval` | Recall@k and MRR of the vault's keyword search, with replayable cases |
+
 ## Usage Notes
 
 **Daily:**

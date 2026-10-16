@@ -46,6 +46,7 @@
     "perf/competencies/README.md",
     "thinking/README.md",
     "work/meetings/README.md",
+    "syntheses/README.md",
     ".shardmind/**",
     ".shardmindignore"
   ],
@@ -72,6 +73,7 @@
     "perf/competencies/*.md",
     "brain/*.md",
     "reference/",
+    "syntheses/",
     "memories/"
   ],
   "version_fingerprints": {
