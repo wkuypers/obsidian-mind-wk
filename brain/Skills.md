@@ -83,6 +83,7 @@ An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`
 | Command | Purpose |
 |---------|---------|
 | `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only; never compiles |
+| `/om-wiki-compile` | Compile raw sources into concept pages in `wiki/concepts/`, each `llm-draft` with a confidence and its sources; reviewed pages only get a proposal callout |
 
 ## Usage Notes
 
