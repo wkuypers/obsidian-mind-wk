@@ -85,6 +85,7 @@ An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`
 | `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only; never compiles |
 | `/om-wiki-compile` | Compile raw sources into concept pages in `wiki/concepts/`, each `llm-draft` with a confidence and its sources; reviewed pages only get a proposal callout |
 | `/om-wiki-thesis` | Test a claim for and against: decomposition you confirm, vault and web evidence rated, a second look at the weaker side, a verdict with its confidence, in `wiki/theses/` |
+| `/om-wiki-lint` | Check `wiki/` against its rules (layout, raw immutability, front matter, sources, links, backlog); `--deep` checks key claims on the web for and against. Changes nothing without approval |
 
 ## Usage Notes
 
