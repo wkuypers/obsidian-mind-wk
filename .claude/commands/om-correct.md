@@ -38,7 +38,7 @@ This is the design. The search is the easy part.
 
 `isHistoricalNote` in `.claude/scripts/lib/correction-sweep.ts` decides the third category, and its rules are pinned by tests. A note is historical if **any one** holds:
 
-- it sits under a record directory (`archive/`, `1-1/`, `meetings/`, `thinking/`, `memories/`, `journal/`, `incidents/`)
+- it sits under a record directory (`archive/`, `1-1/`, `meetings/`, `thinking/`, `memories/`, `journal/`, `incidents/`, `raw/`)
 - its filename carries a date, prefix **or** suffix — this vault's 1:1 convention is `<Person> YYYY-MM-DD.md`
 - its frontmatter `status` is `superseded`, `archived`, `completed`, `deprecated` or `done`
 

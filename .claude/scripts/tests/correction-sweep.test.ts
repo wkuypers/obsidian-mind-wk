@@ -41,6 +41,13 @@ describe("isHistoricalNote", () => {
 		assert.equal(isHistoricalNote("work/meetings/2026-03-02 Platform Sync.md"), true);
 	});
 
+	// An ingested wiki source is evidence, so it is protected by its folder
+	// alone: a raw file that lost its date prefix must still never be edited.
+	test("an ingested raw source is historical even without a date", () => {
+		assert.equal(isHistoricalNote("wiki/raw/attention-is-all-you-need.md"), true);
+		assert.equal(isHistoricalNote("wiki/concepts/Self-attention.md"), false);
+	});
+
 	// The naming-convention signal ON ITS OWN: no record directory in the path,
 	// no status in the frontmatter, nothing but the date to go on.
 	test("a date in the filename is enough by itself, prefix or suffix", () => {
