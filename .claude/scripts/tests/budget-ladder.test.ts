@@ -10,7 +10,7 @@
 
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -174,7 +174,66 @@ function oldNorthStar(raw: string): string {
 }
 
 describe("northStarLadder", () => {
-	const VAULT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+	// The North Star the template ships. A fixture, not the repo's own file: in a vault, that one holds the user's goals.
+	const SHIPPED_NORTH_STAR = `---
+date:
+description: "Living document of goals, focus areas, and aspirations — read at session start, updated when direction shifts"
+tags:
+  - brain
+  - north-star
+aliases:
+  - Goals
+  - Focus
+---
+
+# North Star
+
+A living document of goals, aspirations, and current focus areas. Both you and Claude write to this. Claude reads it at the start of meaningful work sessions and references it when making suggestions.
+
+## Current Focus
+
+_What am I working toward right now?_
+
+-
+
+## Goals
+
+### Short-term (This Quarter)
+
+-
+
+### Medium-term (This Half)
+
+-
+
+### Long-term (This Year+)
+
+-
+
+## Aspirations
+
+_What kind of engineer/person am I becoming?_
+
+-
+
+## Anti-goals
+
+_What am I explicitly NOT optimizing for?_
+
+-
+
+## Shifts Log
+
+Record when focus changes, with date and reason.
+
+| Date | Shift | Reason |
+|------|-------|--------|
+|      | Created North Star | Initial setup |
+
+## Changements locaux
+
+<!-- Propre à chaque coffre ; le gabarit la laisse vide. Ce qu'une session ajoute à cette note s'écrit sous ce titre. -->
+`;
 
 	test("full equals the old slice on a file with nothing to clean (the shipped template, minus its Shifts Log)", () => {
 		const raw = `---\ndate:\n---\n# North Star\n\n## Current Focus\n\n- Ship it\n\n## Goals\n\n- Grow\n`;
@@ -223,7 +282,7 @@ describe("northStarLadder", () => {
 	});
 
 	test("the shipped template yields no headlines (its bullets are empty), so the ladder skips those levels", () => {
-		const l = northStarLadder(readFileSync(join(VAULT, "brain", "North Star.md"), "utf-8"));
+		const l = northStarLadder(SHIPPED_NORTH_STAR);
 		assert.deepEqual(l.headlines, []);
 		assert.ok(!l.full.includes("Shifts Log"));
 	});
