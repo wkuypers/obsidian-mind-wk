@@ -180,6 +180,9 @@ describe("shouldSkipFile — skip rules", () => {
 	test("skips thinking/", () => {
 		assert.equal(shouldSkipFile("/vault/thinking/draft.md"), true);
 	});
+	test("skips an iA Presenter bundle", () => {
+		assert.equal(shouldSkipFile("/vault/work/Talk.iapresenter/text.md"), true);
+	});
 	test("skips wiki/raw/ but not the compiled wiki pages", () => {
 		assert.equal(shouldSkipFile("/vault/wiki/raw/2026-10-18-source.md"), true);
 		assert.equal(shouldSkipFile("/vault/wiki/concepts/Self-attention.md"), false);

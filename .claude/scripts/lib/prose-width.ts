@@ -15,7 +15,9 @@
  * math, tables and tab-separated rows, headings, list items and bare list
  * markers, indented lines (indented code, a list item's continuation),
  * field lines (`**Label:**` / `**Label**:`, one field per line by design),
- * embeds, callout and blockquote markers, and a line after an explicit hard
+ * embeds, callout and blockquote markers, footnote definitions (`[^id]: …`,
+ * each its own block) and numbered reference entries (`[1] …`, one per line
+ * in a bibliography), and a line after an explicit hard
  * break (two trailing spaces or a backslash) or a lead-in ending in `:`.
  *
  * A note that is a raw capture — a pasted research dump, a benchmark log —
@@ -30,6 +32,10 @@ const LIST_ITEM = /^(?:[-*+]|\d+[.)])(?:\s|$)/;
  * `**Blast radius**: …`) and `**1. Question?**` items, one per line by design.
  */
 const BOLD_ITEM = /^\*\*[^*]+\*\*/;
+/** A footnote definition, `[^id]: …`: each one is its own block. */
+const FOOTNOTE_DEF = /^\[\^[^\]\s]+\]:/;
+/** A numbered reference entry, `[1] …`: one source per line in a bibliography. */
+const REF_ENTRY = /^\[\d+\]\s/;
 
 /** True when this (already de-quoted) line is structure, never prose. */
 function isStructure(line: string): boolean {
@@ -41,6 +47,8 @@ function isStructure(line: string): boolean {
 		line.includes("\t") ||
 		LIST_ITEM.test(line) ||
 		BOLD_ITEM.test(line) ||
+		FOOTNOTE_DEF.test(line) ||
+		REF_ENTRY.test(line) ||
 		line.startsWith("<") ||
 		line.startsWith("![[") ||
 		line.startsWith("[!") ||

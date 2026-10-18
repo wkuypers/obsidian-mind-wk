@@ -49,6 +49,8 @@ describe("hardWrappedParagraphs — structure is never counted", () => {
 		["a fence inside a blockquote", ["> Run this:", "> ```sh", "> one", "> two", "> ```"]],
 		["prose, then a blockquote: two blocks", ["**A question?**", "> An answer on one line.", "Back in prose."]],
 		["bold-led items, one per line", ["**1. First question?** Detail.", "**2. Second question?** More."]],
+		["footnote definitions, each its own block", ["[^calendar]: Table, 15 October 2025.", "[^1]: Trends, 18 November 2010."]],
+		["numbered reference entries, one per line", ["[1] Bell, *Post-Industrial Society*, 1973.", "[2] Arendt, *The Human Condition*, 1958."]],
 	];
 	for (const [name, lines] of clean) {
 		test(name, () => assert.deepEqual(at(...lines), []));
@@ -59,6 +61,9 @@ describe("hardWrappedParagraphs — structure is never counted", () => {
 	});
 	test("CRLF prose is still prose", () => {
 		assert.deepEqual(hardWrappedParagraphs("A paragraph\r\nwrapped.\r\n"), [2]);
+	});
+	test("a line led by an inline link is still prose", () => {
+		assert.deepEqual(at("[A report](https://example.org) says the cost", "fell by half."), [2]);
 	});
 	test("prose resumes being checked after a fence closes", () => {
 		assert.deepEqual(at("```", "x", "```", "Prose that", "wraps."), [5]);

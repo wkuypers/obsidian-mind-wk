@@ -10,7 +10,8 @@
  * Scope mirrors that gate: machinery and agent config trees are skipped, and
  * so are session transcripts. Templates are checked: every note made from one
  * inherits its shape. A note opts out with `verbatim: true`; a folder of raw
- * captures opts out with a `.verbatim` file.
+ * captures opts out with a `.verbatim` file. An iA Presenter bundle
+ * (`*.iapresenter/`) is slide markup, not a note: its line breaks are slides.
  */
 
 import { test } from "node:test";
@@ -37,7 +38,9 @@ function notes(): string[] {
 		for (const e of entries) {
 			if (SKIP.has(e.name)) continue;
 			const r = rel === "" ? e.name : `${rel}/${e.name}`;
-			if (e.isDirectory()) walk(r);
+			if (e.isDirectory()) {
+				if (!e.name.toLowerCase().endsWith(".iapresenter")) walk(r);
+			}
 			else if (e.name.toLowerCase().endsWith(".md")) out.push(r);
 		}
 	};
