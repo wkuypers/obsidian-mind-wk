@@ -471,6 +471,7 @@ Commands that work **only** inside `wiki/`, an LLM-compiled layer adapted from [
 |---------|-------------|
 | `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only. Never compiles, never overwrites |
 | `/om-wiki-compile` | Compile raw sources into concept pages in `wiki/concepts/`, each marked `llm-draft` with a confidence and its sources. A page you have reviewed only gets a proposal callout, never a rewrite |
+| `/om-wiki-thesis` | Test a claim for and against. You confirm the decomposition first; evidence from the vault and the web is rated, the weaker side gets a second look, and the page ends with a verdict and its confidence |
 
 ---
 
