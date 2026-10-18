@@ -79,9 +79,10 @@ export interface SweepCandidate {
  * merely contains the word (`work/archive-policy.md`) is not swept into the
  * exemption. `thinking/` is included because a scratchpad records reasoning as
  * it stood; `memories/` because captures carry their own supersession machinery
- * and a text sweep editing them would fight it.
+ * and a text sweep editing them would fight it; `raw/` because an ingested
+ * source (`wiki/raw/`) is evidence kept exactly as captured, dated or not.
  */
-const HISTORICAL_DIRS = new Set(["archive", "1-1", "meetings", "thinking", "memories", "journal", "incidents"]);
+const HISTORICAL_DIRS = new Set(["archive", "1-1", "meetings", "thinking", "memories", "journal", "incidents", "raw"]);
 
 /**
  * Frontmatter `status` values that mark a note as a closed record.

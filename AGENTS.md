@@ -9,7 +9,7 @@ Personal Obsidian vault -- an external brain for work notes, decisions, performa
 | `Home.md` | **Vault entry point** -- embedded Base views, quick links | Open this first |
 | `vault-manifest.json` | **Template metadata** -- version, infrastructure vs user content boundaries, frontmatter schemas, version fingerprints | Used by `/om-vault-upgrade` for migration |
 | `CHANGELOG.md` | **Version history** -- tracks template releases (v1--v3.3) with what changed | Reference for upgrade paths |
-| `bases/` | **All Bases centralized** -- dynamic views for navigation | `Work Dashboard` (incl. Stale Actives), `Recently Touched` (recency by real mtime — the answer to "what's most recent", not filename dates), `Incidents`, `People Directory`, `1-1 History`, `Review Evidence`, `Competency Map`, `Templates` |
+| `bases/` | **All Bases centralized** -- dynamic views for navigation | `Work Dashboard` (incl. Stale Actives), `Recently Touched` (recency by real mtime — the answer to "what's most recent", not filename dates), `Incidents`, `People Directory`, `1-1 History`, `Review Evidence`, `Competency Map`, `Templates`, `Wiki` |
 | `work/` | Work notes index | `Index.md` (detailed MOC) |
 | `work/active/` | **Current projects only** (1-3 files) | Move here when starting, move to archive when done |
 | `work/archive/YYYY/` | Completed work organized by year | Grows over time |
@@ -28,6 +28,7 @@ Personal Obsidian vault -- an external brain for work notes, decisions, performa
 | `org/teams/` | Team notes as graph nodes | One note per team |
 | `reference/` | Codebase knowledge, architecture maps | Flow docs, architecture docs |
 | `syntheses/` | Output of the analysis commands (`/om-synthesize`, `/om-distill`…) -- appended, never rewritten | Rules in `syntheses/README.md` |
+| `wiki/` | LLM-compiled layer: `inbox/`, create-only `raw/`, `concepts/`, `theses/` | Rules in `wiki/README.md` |
 | `thinking/` | Scratchpad for drafts and reasoning | Named `YYYY-MM-DD-topic.md` |
 | `templates/` | Obsidian templates | `Work Note.md`, `Decision Record.md`, etc. |
 
@@ -185,7 +186,7 @@ Use tags in frontmatter (not inline):
 
 - **Type**: `work-note`, `decision`, `perf`, `thinking`, `north-star`, `competency`, `person`, `team`, `brain`
 - **Index**: `index`, `moc`
-- **Status** (frontmatter field): `active`, `completed`, `archived`, `proposed`, `accepted`, `deprecated`
+- **Status** (frontmatter field): `active`, `completed`, `archived`, `proposed`, `accepted`, `deprecated`; in `wiki/`: `llm-draft`, `reviewed`, `rejected`
 - **Team** (frontmatter field on people + work notes): your team names, e.g. `Backend`, `Platform`, `Mobile`
 - **Cycle** (frontmatter field on review-related notes): `h2-2024`, `h1-2025`, etc.
 - **Person** (frontmatter field on evidence notes): full name of the person

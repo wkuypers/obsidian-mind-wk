@@ -41,7 +41,7 @@ Do not classify from a search snippet. Open the note and find the sentence that 
 
 A note is **historical** if any one of these holds:
 
-- a record directory anywhere in its path: `archive/`, `1-1/`, `meetings/`, `thinking/`, `memories/`, `journal/`, `incidents/`
+- a record directory anywhere in its path: `archive/`, `1-1/`, `meetings/`, `thinking/`, `memories/`, `journal/`, `incidents/`, `raw/`
 - a date in the filename, prefix **or** suffix (the 1:1 convention is `<Person> YYYY-MM-DD.md`, so a prefix-only reading misses all of them)
 - frontmatter `status` of `superseded`, `archived`, `completed`, `deprecated`, `done`
 

@@ -1,0 +1,122 @@
+filters:
+  and:
+    - file.ext == "md"
+    - file.inFolder("wiki")
+    - '!file.inFolder("wiki/inbox")'
+    - file.name != "README"
+formulas:
+  age_days: 'if(created, (today() - date(created)).days, "")'
+  unchecked_days: 'if(verified, (today() - date(verified)).days, "")'
+properties:
+  file.name:
+    displayName: Page
+  title:
+    displayName: Title
+  type:
+    displayName: Type
+  status:
+    displayName: Review
+  confidence:
+    displayName: Confidence
+  verdict:
+    displayName: Verdict
+  verified:
+    displayName: Verified
+  created:
+    displayName: Created
+  source:
+    displayName: Source
+  description:
+    displayName: Summary
+  formula.age_days:
+    displayName: Days Old
+  formula.unchecked_days:
+    displayName: Days Since Check
+views:
+  - type: table
+    name: To review
+    filters:
+      and:
+        - status == "llm-draft"
+    order:
+      - file.name
+      - type
+      - confidence
+      - formula.age_days
+      - description
+    sort:
+      - property: created
+        direction: ASC
+  - type: table
+    name: Theses
+    filters:
+      and:
+        - type == "thesis"
+    order:
+      - title
+      - verdict
+      - confidence
+      - status
+      - verified
+    sort:
+      - property: created
+        direction: DESC
+  - type: table
+    name: Low confidence
+    filters:
+      and:
+        - confidence == "low"
+        - status != "rejected"
+    order:
+      - file.name
+      - type
+      - status
+      - verified
+      - description
+    sort:
+      - property: verified
+        direction: ASC
+  - type: table
+    name: Check due
+    filters:
+      and:
+        - type != "source"
+        - status != "rejected"
+        - formula.unchecked_days > 365
+    order:
+      - file.name
+      - confidence
+      - status
+      - formula.unchecked_days
+    sort:
+      - property: verified
+        direction: ASC
+  - type: table
+    name: Reviewed
+    filters:
+      and:
+        - status == "reviewed"
+    order:
+      - file.name
+      - type
+      - confidence
+      - verified
+      - description
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Sources
+    filters:
+      and:
+        - type == "source"
+    order:
+      - file.name
+      - title
+      - source
+      - created
+      - description
+    sort:
+      - property: created
+        direction: DESC
+    limit: 100

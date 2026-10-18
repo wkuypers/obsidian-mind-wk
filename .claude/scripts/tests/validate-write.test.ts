@@ -81,6 +81,11 @@ describe("validate-write — skip rules (silent exit, no stdout)", () => {
 		assert.equal(code, 0);
 		assert.equal(stdout.trim(), "");
 	});
+	test("skips wiki/raw/", () => {
+		const { stdout, code } = runOn("/vault/wiki/raw/2026-10-18-source.md");
+		assert.equal(code, 0);
+		assert.equal(stdout.trim(), "");
+	});
 	test("skips Windows backslash path", () => {
 		const { stdout, code } = runOn("C:\\vault\\.claude\\commands\\foo.md");
 		assert.equal(code, 0);

@@ -463,6 +463,17 @@ Eleven commands that read the vault and write **only** to `syntheses/`. Each one
 | `/om-contradictions` | Opposing claims, reversed decisions and outdated profiles, classified. Corrects nothing |
 | `/om-retrieval-eval` | Recall@k and MRR of the vault's keyword search, with cases you can replay after a change |
 
+### 📚 Wiki Commands
+
+Commands that work **only** inside `wiki/`, an LLM-compiled layer adapted from [llm-wiki](https://github.com/nvk/llm-wiki) (MIT, see `.claude/licenses/llm-wiki.md`). Sources are kept unchanged in `wiki/raw/`; every page the agent compiles stays `status: llm-draft` until you review it. Rules: `wiki/README.md`.
+
+| Command | What It Does |
+|---------|-------------|
+| `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only. Never compiles, never overwrites |
+| `/om-wiki-compile` | Compile raw sources into concept pages in `wiki/concepts/`, each marked `llm-draft` with a confidence and its sources. A page you have reviewed only gets a proposal callout, never a rewrite |
+| `/om-wiki-thesis` | Test a claim for and against. You confirm the decomposition first; evidence from the vault and the web is rated, the weaker side gets a second look, and the page ends with a verdict and its confidence |
+| `/om-wiki-lint` | Check `wiki/` against its rules: layout, raw sources left unchanged, front matter, sources, links, backlog. With `--deep`, key claims are searched on the web for and against. Reports first; changes nothing you have not approved |
+
 ---
 
 ## 🤖 Subagents
@@ -742,6 +753,7 @@ This is a fork of [breferrari/obsidian-mind](https://github.com/breferrari/obsid
 - **Declared exemption from the organization threshold.** Some notes are bulk by nature: a verbatim source, a manuscript, a book split by chapter. Add `hygiene: exempt` to a note's frontmatter, or to its folder's `Index.md` to cover every note in that folder, and the ~25 KB split flag no longer fires for them. The hooks no longer need to hardcode folder lists. `oversize_ok` is read as the same declaration. Notes named `*texte intégral*` or `*OCR intégral*` are exempt by name, like `*Archive*`. The rule is in `.claude/rules/exemption-hygiene.md`.
 - **Fewer false hygiene flags.** An `*Archive*` satellite in `work/active/` is no longer reported as a "completed but not archived" project. Brain notes written as numbered lists now count as having content (before, only bullets did).
 - **More robust wikilink checks.** Names are compared in Unicode NFC. macOS and iCloud store accented filenames as NFD, so links to them used to be reported as broken. Office files (`.docx`, `.xlsx`, `.pptx`, `.csv`…) now count as assets.
+- **`wiki/`, an LLM-compiled layer (in progress).** Adapted from [nvk/llm-wiki](https://github.com/nvk/llm-wiki) (MIT), itself an implementation of Andrej Karpathy's "LLM Wiki" idea. Sources dropped in `wiki/inbox/` are kept unchanged in `wiki/raw/` and compiled into concept and thesis pages. Every page the agent writes is marked `status: llm-draft` with a `confidence` until you review it, and the agent writes nowhere else. The rules are in `wiki/README.md`; the license and credit are in `.claude/licenses/llm-wiki.md`.
 - **"Local changes" sections.** The notes each vault is expected to edit (`Home.md`, `brain/*.md`, indexes, `.gitignore`) end with a `Changements locaux` heading. The template leaves it empty, and a vault's own additions go below it, which keeps template merges clean.
 
 ---

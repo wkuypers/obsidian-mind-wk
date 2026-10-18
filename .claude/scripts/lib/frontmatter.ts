@@ -25,6 +25,9 @@ const SKIP_PATH_SEGMENTS: readonly string[] = [
 	".obsidian/",
 	"templates/",
 	"thinking/",
+	// Ingested sources are kept exactly as captured (wiki/README.md §2):
+	// a missing link or a hard wrap there is the source, not a defect.
+	"wiki/raw/",
 ];
 
 /**

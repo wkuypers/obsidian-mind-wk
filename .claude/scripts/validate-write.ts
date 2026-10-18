@@ -4,7 +4,7 @@
  *
  * Reads the hook JSON payload from stdin, inspects the tool_input.file_path,
  * skips files outside the vault-note scope (dotfiles, templates, root docs,
- * translated READMEs, thinking drafts), and emits a hookSpecificOutput with
+ * translated READMEs, thinking drafts, ingested wiki/raw/ sources), and emits a hookSpecificOutput with
  * vault hygiene warnings when frontmatter or wikilinks are missing.
  */
 

@@ -16,7 +16,8 @@
  * Scan rules (mirror lib/wikilinks.ts semantics):
  *  - target set: every vault .md except machinery/config trees
  *  - source set: additionally excludes templates/ (placeholder links by
- *    design) and thinking/session-logs/ (transcripts)
+ *    design), thinking/session-logs/ (transcripts) and wiki/raw/ (ingested
+ *    sources, kept exactly as captured: their links belong to the source)
  *  - resolution: basename OR frontmatter alias OR path suffix OR
  *    source-relative — see lib/wikilinks.ts header
  */
@@ -48,7 +49,7 @@ const TARGET_SKIP = [
 	".shardmind",
 	"node_modules",
 ];
-const SOURCE_SKIP_EXTRA = ["templates", "thinking/session-logs"];
+const SOURCE_SKIP_EXTRA = ["templates", "thinking/session-logs", "wiki/raw"];
 
 function walkMd(root: string): string[] {
 	const out: string[] = [];
