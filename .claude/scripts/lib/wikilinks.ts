@@ -49,6 +49,8 @@ const ASSET_EXTENSIONS = new Set([
 	"ppt",
 	"pptx",
 	"csv",
+	"gpx",
+	"epub",
 ]);
 
 /**

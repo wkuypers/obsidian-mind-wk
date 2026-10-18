@@ -91,6 +91,10 @@ describe("extractWikilinkTargets", () => {
 			["example.com Analytics"],
 		);
 	});
+	test("GPS tracks and e-books are assets", () => {
+		assert.deepEqual(extractWikilinkTargets("[[trace.gpx]] ![[Livre.epub]] [[TRACE.GPX]]"), []);
+		assert.deepEqual(extractWikilinkTargets("[[v1.gpx notes]]"), ["v1.gpx notes"]);
+	});
 	test("relative path target preserved", () => {
 		assert.deepEqual(extractWikilinkTargets("[[../personas]]"), [
 			"../personas",
