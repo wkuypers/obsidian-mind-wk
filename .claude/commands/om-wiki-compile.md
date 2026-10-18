@@ -57,7 +57,7 @@ Compiling turns sources into pages that explain a concept in their own words and
    ```
 9. **Check and report.**
    - `git status --short` must show changes under `wiki/concepts/` only; `git status --short -- wiki/raw` must be empty.
-   - Every `[[link]]` you wrote must resolve to an existing note or alias. Fix or remove any that does not.
+   - Every `[[link]]` you wrote must resolve to an existing note or alias: `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must pass (it names any broken link). Fix or remove any link it reports.
    - Report: each page written, with its action and `confidence`; the proposals left on reviewed pages; the back-links not added; the sources still waiting; the pages worth promoting out of `wiki/` once reviewed — listed, never moved.
 
 **Never commit.** The user reviews, sets `status: reviewed` or `rejected`, and commits.
