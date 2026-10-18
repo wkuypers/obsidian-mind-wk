@@ -139,7 +139,8 @@ describe("AGENTS.md is the one instruction file (#321)", () => {
 		assert.ok(!claudePaths.includes(".claude/rules/"), "the Claude module claims all of .claude/rules/, shared files included");
 		const dir = resolve(repoRoot, ".claude/rules");
 		const claudeOnly = readdirSync(dir)
-			.filter((f) => f.endsWith(".md") && !readFileSync(resolve(dir, f), "utf-8").startsWith(SHARED_LINE))
+			// local.md belongs to the vault, not the template, so no schema module can claim it.
+			.filter((f) => f.endsWith(".md") && f !== "local.md" && !readFileSync(resolve(dir, f), "utf-8").startsWith(SHARED_LINE))
 			.map((f) => `.claude/rules/${f}`)
 			.sort();
 		assert.deepEqual(
