@@ -12,8 +12,8 @@ tags: [proposal, llm-wiki]
 ## 1. Résumé
 
 1. Le fork contient déjà la moitié « requêtes réinjectées » de llm-wiki : onze commandes d'analyse écrivent dans `syntheses/`, et `/om-distill` porte déjà une confiance et une provenance par affirmation. La « mémoire de session » est elle aussi couverte. Ce que llm-wiki apporte vraiment de neuf tient en cinq points : des sources brutes immuables, des pages de concept compilées et tenues à jour, un mode thèse structuré, une confiance et une fraîcheur au niveau de la page, et un lint.
-2. Recommandation : un seul nouveau dossier racine `wiki/`, contenant `inbox/`, `raw/`, `concepts/` et `theses/`. Chaque page compilée y naît `statut: brouillon-llm` et n'en sort que par la main de l'utilisateur. Les règles vivent dans `wiki/README.md`, sur le modèle exact de `syntheses/README.md`. C'est un hybride des scénarios A et B (voir §3).
-3. Quatre commandes, sous un préfixe à trancher (`omw-` ou `om-wiki-`, voir §6) : ingérer, compiler, thèse, lint. Aucun hook, aucun script Python, aucune capture de session.
+2. Recommandation : un seul nouveau dossier racine `wiki/`, contenant `inbox/`, `raw/`, `concepts/` et `theses/`. Chaque page compilée y naît `status: llm-draft` et n'en sort que par la main de l'utilisateur. Les règles vivent dans `wiki/README.md`, sur le modèle exact de `syntheses/README.md`. C'est un hybride des scénarios A et B (voir §3).
+3. Quatre commandes, sous le préfixe `om-wiki-` (décidé, voir §6) : ingérer, compiler, thèse, lint. Aucun hook, aucun script Python, aucune capture de session.
 4. Il faut modifier trois points de code détenus par le gabarit pour que `raw/` soit réellement protégé et ne casse pas la CI : la liste « historique » de `/om-correct`, le cliquet des liens cassés, et la largeur de prose.
 5. Le meilleur argument contre : on crée un second dossier de sorties LLM à côté de `syntheses/`, avec des règles opposées (des pages vivantes, là où `syntheses/` n'ajoute que des sections datées). C'est ce coût qu'il faut accepter ou refuser.
 
@@ -26,10 +26,10 @@ Légende du verdict : **reprendre** (presque tel quel), **adapter** (l'idée oui
 | **Sources brutes immuables** (`raw/<type>/AAAA-MM-JJ-slug.md`, frontmatter `title, source, type, ingested, tags, summary`) | Aucun. `work/meetings/` reçoit des exports bruts, mais `/om-intake` les **supprime** après traitement. | Complément | **Adapter.** C'est le cœur de l'idée. L'immuabilité doit être plus stricte que chez llm-wiki : son `refresh` écrase le fichier brut, et ses `compile` étape 0 et `lint --fix` (C11, C13) déplacent les fichiers et réécrivent leur frontmatter. Ici, `raw/` reste en écriture unique : une nouvelle révision crée un nouveau fichier. Côté code, `raw` doit entrer dans `HISTORICAL_DIRS` (`.claude/scripts/lib/correction-sweep.ts:84`), sinon `/om-correct` peut le réécrire comme une simple « reformulation ». |
 | **Compilation source → page de concept** (synthétisée, `sources:` en frontmatter, section `## Sources` qui dit ce que chaque source a apporté, « Voir aussi » bidirectionnel) | `syntheses/` (onze commandes). Mais une synthèse n'est jamais réécrite : on y ajoute une section datée (`syntheses/README.md` §4). `reference/` est vide (`.gitkeep`). | Complément, avec un conflit de modèle | **Adapter.** C'est la seule fonction qui exige des pages *vivantes*. Je garde le format de la section `## Sources` et l'idée de compilation incrémentale. J'écarte la création automatique massive de pages : chaque exécution reste bornée, par exemple à 5 pages, à cause du coût des hooks (voir §3, « hooks »). |
 | **Mode thèse** (décomposition en affirmation centrale, variables, prédiction testable et critère de réfutation ; agents « pour », « contre » et « mécanisme » ; preuves classées par force ; verdict `Supported…Contradicted` ; un second tour sur le côté le plus faible) | `/om-challenge` (contradiction contre le coffre), `/om-panel`, `/om-research` (web, données « à vérifier ») | Complément | **Reprendre la structure, adapter l'exécution.** La force de llm-wiki est la décomposition *confirmée par l'utilisateur avant la recherche* et la règle « chercher le côté le plus faible ». Je l'applique d'office, pas seulement en mode `--min-time`. Je ramène les 5 à 8 sous-agents web à 3 (pour, contre, mécanisme), plus la lecture du coffre. Les verdicts sont traduits en français. |
-| **Indice de confiance** (`confidence: high/medium/low` par page ; barème de crédibilité 0–6 calculé *hors* de l'auto-évaluation des agents ; `volatility` et `verified` pour la fraîcheur) | `om` MCP `remember` : `confidence: verified/inferred/unverified` (`lib/memory-write.ts`), affichée par `bases/Memories.base`. `/om-distill` : confiance par affirmation (`stated/high/medium`). Loi d'écriture 3 de `AGENTS.md` : marqueurs en ligne `(TBC)`, `(unverified)`, `(inferred)`. | Doublon partiel (trois vocabulaires existent déjà) | **Adapter.** Confiance au niveau de la page (`confiance: élevée/moyenne/faible`), avec les critères de llm-wiki. Les affirmations douteuses à l'intérieur d'une page gardent les marqueurs en ligne existants. Je reprends `vérifié: AAAA-MM-JJ`. J'écarte le score de fraîcheur à décroissance exponentielle : trop de mécanique pour ce qu'il apporte. Le vocabulaire est à trancher (§6, question 3). |
+| **Indice de confiance** (`confidence: high/medium/low` par page ; barème de crédibilité 0–6 calculé *hors* de l'auto-évaluation des agents ; `volatility` et `verified` pour la fraîcheur) | `om` MCP `remember` : `confidence: verified/inferred/unverified` (`lib/memory-write.ts`), affichée par `bases/Memories.base`. `/om-distill` : confiance par affirmation (`stated/high/medium`). Loi d'écriture 3 de `AGENTS.md` : marqueurs en ligne `(TBC)`, `(unverified)`, `(inferred)`. | Doublon partiel (trois vocabulaires existent déjà) | **Adapter.** Confiance au niveau de la page (`confidence: high/medium/low`, décidé), avec les critères de llm-wiki. Les affirmations douteuses à l'intérieur d'une page gardent les marqueurs en ligne existants. Je reprends `verified: AAAA-MM-JJ`. J'écarte le score de fraîcheur à décroissance exponentielle : trop de mécanique pour ce qu'il apporte. Les marqueurs en ligne et le vocabulaire `verified/inferred/unverified` du serveur `om` restent réservés aux mémoires. |
 | **Provenance des affirmations** (au niveau de l'article : `sources:` plus « ce que la source a apporté » ; aucune citation par affirmation) | `/om-distill` fait mieux : `(B3 — [[Note#Section]])` par affirmation | Complément | **Adapter** : `sources:` en frontmatter et section `## Sources` comme llm-wiki, plus un renvoi `[[raw/…]]` en fin de paragraphe quand une affirmation est précise (le modèle `/om-distill`). |
 | **Lint structurel** (C1 à C19, `--fix` mécanique) | `/om-vault-audit` (liste de dossiers figée), scan d'hygiène (`lib/active-hygiene.ts`), cliquet des liens cassés en CI | Doublon partiel | **Adapter, minimalement** : le lint ne couvre que `wiki/` (frontmatter requis, `sources:` résolubles, pages orphelines, `raw/` non compilé). Il n'agit qu'en rapport : aucun `mv`, aucune réécriture de `raw/`. |
-| **Lint profond** (`--deep` : vérification par WebSearch des affirmations clés, rapport seulement ; `audit` cherche une requête « pour » et une « contre » par affirmation) | `/om-research` (web, proposition seulement) ; agent `review-fact-checker` (dédié aux évaluations) | Complément | **Reprendre l'idée « une requête pour, une contre »**, en option `--profond` du lint, plafonnée à environ 10 affirmations par passage. Le résultat est un rapport ; la confiance ne baisse que si l'utilisateur l'accepte. |
+| **Lint profond** (`--deep` : vérification par WebSearch des affirmations clés, rapport seulement ; `audit` cherche une requête « pour » et une « contre » par affirmation) | `/om-research` (web, proposition seulement) ; agent `review-fact-checker` (dédié aux évaluations) | Complément | **Reprendre l'idée « une requête pour, une contre »**, en option `--deep` du lint, plafonnée à environ 10 affirmations par passage. Le résultat est un rapport ; la confiance ne baisse que si l'utilisateur l'accepte. |
 | **Réponses réinjectées comme notes** (`/wiki:output`, sorties `output/…` ; `query` est strictement en lecture seule) | `syntheses/` et ses onze commandes : c'est exactement cette fonction | **Doublon** | **Écarter** le dossier `output/`. Les réponses vont dans `syntheses/` via les commandes existantes. Seul ajout : `wiki/` devient une source que ces commandes peuvent lire (aucun changement n'est nécessaire : `wiki/` est versionné par git, donc dans le corpus de `syntheses/README.md` §1). |
 | **Inbox / dépôt de sources** (`inbox/` par sujet ; `ingest --inbox` route les `.url`, `.md`, `.pdf`… puis les déplace dans `.processed/`) | `work/meetings/` + `/om-intake` (pour les réunions) ; `defuddle` (skill de capture web) | Complément | **Adapter** : `wiki/inbox/` est vidé par la commande d'ingestion, qui **déplace** (`git mv`) chaque fichier vers `raw/`, sans jamais supprimer. Je n'utilise pas de `.processed/`, car le déplacement suffit. |
 | **Mémoire de session** (`HUB/.sessions/`, capture activée par défaut, hooks Codex, CLI Python `llm-wiki-session`, réhydratation) | Hook SessionStart (contexte injecté, budget 9 100 octets), `brain/`, `om` MCP (`remember`, `recall`), sauvegarde des transcripts par PreCompact (`thinking/session-logs/`), `/om-wrap-up`, `/om-history` | **Doublon** | **Écarter.** (1) Tout ce qu'elle fait existe déjà. (2) Elle exige un script Python de 1 754 lignes et des hooks sur chaque appel d'outil, alors que ce coffre a déjà vécu un empilement de workers en arrière-plan (`lib/qmd-refresh.ts`). (3) La capture serait activée par défaut, à l'opposé du principe « pas d'automatisme sans décision ». |
@@ -66,7 +66,7 @@ wiki/                     # couche compilée, réécrite par le LLM
   README.md               # règles (infrastructure)
 ```
 
-- **Frontmatter** : les pages de `wiki/` sont libres de réécriture, avec `statut: brouillon-llm` tant qu'elles ne sont pas relues. La promotion consiste à déplacer la page vers `reference/` (`git mv`) puis à retirer `statut`.
+- **Frontmatter** : les pages de `wiki/` sont libres de réécriture, avec `status: llm-draft` tant qu'elles ne sont pas relues. La promotion consiste à déplacer la page vers `reference/` (`git mv`) puis à changer `status`.
 - **Hooks** : risque de cascade moyen. La compilation réécrit plusieurs pages.
 - **Manifeste et CI** : deux entrées `user_content_roots`, `wiki/README.md` dans `infrastructure`, et deux dossiers à exclure ou marquer pour le cliquet et la prose.
 - **Mises à niveau** : survit si les deux racines sont déclarées.
@@ -82,23 +82,23 @@ wiki/                     # couche compilée, réécrite par le LLM
 wiki/
   inbox/                  # dépôt manuel
   raw/  (.verbatim)       # écriture unique
-  concepts/ theses/       # tout naît « brouillon-llm »
+  concepts/ theses/       # tout naît « llm-draft »
   README.md
 ```
 
-- **Frontmatter** : `statut: brouillon-llm | relu | rejeté`. Le LLM n'écrit **que** dans `wiki/`. Le passage vers `work/`, `brain/` ou `reference/` est un geste humain. Le LLM peut le *proposer* sous forme de liste, jamais l'exécuter.
+- **Frontmatter** : `status: llm-draft | reviewed | rejected`. Le LLM n'écrit **que** dans `wiki/`. Le passage vers `work/`, `brain/` ou `reference/` est un geste humain. Le LLM peut le *proposer* sous forme de liste, jamais l'exécuter.
 - **Hooks** : même risque qu'en A.
 - **Manifeste et CI** : une seule racine, `wiki/`.
 - **Mises à niveau** : survit si déclaré.
 - **Graphe** : un sous-graphe isolé, filtrable par `path:wiki`.
 - **Coût en jetons** : moyen.
-- **Avantages** : frontière maximale, une seule racine, conforme à la contrainte « statut brouillon-llm jusqu'à relecture ».
-- **Risques** : un sas qui ne se vide jamais. Le LLM réécrit des pages déjà `relu`, ce qui contredit la relecture.
+- **Avantages** : frontière maximale, une seule racine, conforme à la contrainte « llm-draft jusqu'à relecture ».
+- **Risques** : un sas qui ne se vide jamais. Le LLM réécrit des pages déjà `reviewed`, ce qui contredit la relecture.
 - **Effort** : moyen.
 
 ### Scénario C : pas de dossier, fonctions greffées par métadonnées
 
-- **Arborescence** : rien de nouveau, sinon un dossier `reference/sources/` pour les bruts (déjà racine utilisateur). Les thèses vont dans `syntheses/Thèse - <sujet>.md`, avec `confiance:` et `statut:` ajoutés aux notes existantes.
+- **Arborescence** : rien de nouveau, sinon un dossier `reference/sources/` pour les bruts (déjà racine utilisateur). Les thèses vont dans `syntheses/Thèse - <sujet>.md`, avec `confidence:` et `status:` ajoutés aux notes existantes.
 - **Hooks** : aucun risque nouveau.
 - **Manifeste et CI** : presque rien.
 - **Mises à niveau** : survit d'office.
@@ -118,7 +118,7 @@ wiki/
 - **Graphe** : deux graphes disjoints.
 - **Coût en jetons** : élevé. Le `SKILL.md` de llm-wiki pèse environ 27 Ko, et un lint complet charge environ 17 000 mots.
 - **Avantages** : aucune adaptation, aucun risque pour le fork. Contrainte de licence : aucune, puisque rien n'est copié.
-- **Risques** : on ne contrôle ni le frontmatter (pas de `statut`/`confiance` à vos conventions), ni le format des liens (double format), ni la langue. Le `refresh` y écrase des bruts. Deux outils, deux vocabulaires.
+- **Risques** : on ne contrôle ni le frontmatter (pas de `status: llm-draft` ni de `confidence` à vos conventions), ni le format des liens (double format), ni la langue. Le `refresh` y écrase des bruts. Deux outils, deux vocabulaires.
 - **Effort** : très faible au départ, coûteux à la longue.
 
 ### Scénario E : prolonger `syntheses/` au lieu de créer `wiki/`
@@ -142,15 +142,15 @@ wiki/
 
 - Une seule racine, `wiki/`, avec `inbox/`, `raw/` (écriture unique, marqueur `.verbatim`), `concepts/` et `theses/`.
 - Les règles vont dans `wiki/README.md` (déclaré en `infrastructure`), lu par chaque commande comme `syntheses/README.md`. C'est la seule façon de ne pas dépasser le plafond de `AGENTS.md` : une ligne de pointeur suffit.
-- Toute page écrite par le LLM porte `statut: brouillon-llm` et `confiance:`.
-- **Le LLM ne réécrit jamais une page dont le `statut` n'est plus `brouillon-llm`.** Pour une page relue, il ajoute une section `> [!question] Proposition de mise à jour (AAAA-MM-JJ)` que vous intégrez ou rejetez. Cela tranche la tension B (« relecture ») contre compilation vivante.
+- Toute page écrite par le LLM porte `status: llm-draft` et `confidence: high|medium|low`.
+- **Le LLM ne réécrit jamais une page dont le `status` n'est plus `llm-draft`.** Pour une page relue, il ajoute une section `> [!question] Proposition de mise à jour (AAAA-MM-JJ)` que vous intégrez ou rejetez. Cela tranche la tension B (« relecture ») contre compilation vivante.
 - La promotion vers `reference/`, `brain/` ou `work/` est faite par vous. La commande peut la proposer, jamais l'exécuter.
 - Les réponses aux requêtes restent dans `syntheses/`. Pas de `output/`, pas d'index, pas de journal, pas de mémoire de session.
-- Quatre commandes : ingérer, compiler, thèse, lint (dont `--profond`).
+- Quatre commandes : ingérer, compiler, thèse, lint (dont `--deep`).
 
 **Pourquoi.**
 
-- La frontière machine/humain est à la fois spatiale (dossier) et déclarée (`statut`).
+- La frontière machine/humain est à la fois spatiale (dossier) et déclarée (`status`).
 - Une seule nouvelle racine.
 - Aucune dépendance à du Python, aucun hook ajouté.
 - Les bruts sont protégés par le code, et pas seulement par l'instruction.
@@ -197,23 +197,25 @@ Chaque étape fait un commit sur `explore/llm-wiki`, se défait par `git revert`
    - Barème de crédibilité indépendant, puis un tour obligatoire sur le côté le plus faible.
    - `wiki/theses/<slug>.md`, avec un verdict parmi : Étayée, Partiellement étayée, Preuves insuffisantes, Contredite, Mitigée.
 6. **Commande de lint**
-   - Rapport seul : frontmatter requis, `sources:` résolubles, pages orphelines, bruts non compilés, pages `brouillon-llm` anciennes.
-   - Option `--profond` : une requête web pour et une contre, sur au plus 10 affirmations. La confiance ne baisse que si vous l'acceptez.
-7. **Base Obsidian** : `bases/Wiki.base` (pages par `statut`, `confiance`, `vérifié`). Les couleurs du graphe vivent dans `.obsidian/`, que l'agent ne modifie pas : c'est à vous de les régler.
+   - Rapport seul : frontmatter requis, `sources:` résolubles, pages orphelines, bruts non compilés, pages `llm-draft` anciennes.
+   - Option `--deep` : une requête web pour et une contre, sur au plus 10 affirmations. La confiance ne baisse que si vous l'acceptez.
+7. **Base Obsidian** : `bases/Wiki.base` (pages par `status`, `confidence`, `verified`). Les couleurs du graphe vivent dans `.obsidian/`, que l'agent ne modifie pas : c'est à vous de les régler.
 8. **Essai dans un coffre** (hors de ce dépôt, dans sa propre session) : trois sources, une compilation, une thèse, un lint. Mesurer le temps des hooks et les jetons consommés avant toute généralisation.
 
 ## 6. Questions ouvertes à trancher
 
-1. **Préfixe** : `omw-` (votre suggestion), ou `om-wiki-` ?
-   - Le fork n'a aucun préfixe propre : ses onze commandes sont en `om-`.
-   - Sur `main` amont (non publié), un test génère des wrappers Gemini pour chaque `om-*.md`. Un `omw-*` n'en aurait pas, alors qu'un `om-wiki-*` en aurait.
-2. **Champs en français ou en anglais** : `statut`/`confiance`/`vérifié`, comme vous le demandez, ou `status`/`confidence` ?
-   - La loi « statut unique » de `AGENTS.md`, les Bases et la liste des statuts historiques de `/om-correct` lisent `status`. Un champ `statut` en serait un second, invisible pour eux.
-3. **Vocabulaire de confiance** : `élevée/moyenne/faible` (llm-wiki traduit), ou `vérifié/inféré/non-vérifié` (déjà utilisé par le serveur `om` et `bases/Memories.base`) ?
+Tranchées le 2026-10-18 :
+
+1. **Préfixe** : `om-wiki-` (par exemple `/om-wiki-ingest`, `/om-wiki-compile`, `/om-wiki-thesis`, `/om-wiki-lint`). Ce préfixe suit la convention `om-` du fork, et les commandes recevront les wrappers Gemini quand le test amont sera fusionné.
+2. **Champs en anglais** : `status`, `confidence`, `verified`. Les nouvelles valeurs de `status` (`llm-draft`, `reviewed`, `rejected`) rejoignent la liste de `AGENTS.md` : c'est l'une des lignes à mesurer face au plafond de 436 octets (étape 1).
+3. **Confiance** : `high/medium/low`, avec les critères de llm-wiki. Le vocabulaire `verified/inferred/unverified` reste celui des mémoires du serveur `om`.
+
+Encore ouvertes :
+
 4. **Frontmatter** : vos conventions (`title, type, source, created, tags, aliases`) et celles du coffre (`date, description, tags`, exigées par le hook) se recouvrent en partie. Faut-il porter les deux (`created` et `date` en double), ou apprendre au hook à accepter `created` (encore une modification de code du gabarit) ?
 5. **Langue des fichiers de commande** : les onze commandes du fork sont rédigées en anglais, et seules leurs sorties sont en français (`syntheses/README.md` §4). Votre consigne « interface en français » vise-t-elle aussi le texte des commandes ?
 6. **`raw/` exposé par MCP ?** Avec `wiki/` dans `user_content_roots`, le serveur `om` sert aussi les bruts aux autres dépôts. Faut-il les retirer avec `mcp_never_expose` ?
-7. **Promotion** : une page relue reste-t-elle dans `wiki/` avec `statut: relu`, ou la déplacez-vous toujours hors de `wiki/` ?
+7. **Promotion** : une page relue reste-t-elle dans `wiki/` avec `status: reviewed`, ou la déplacez-vous toujours hors de `wiki/` ?
 8. **Seuil de passage à C** : si vous n'utilisez au départ que la thèse, préférez-vous commencer par C (une commande thèse écrivant dans `syntheses/`) et n'ouvrir `wiki/` qu'ensuite ?
 
 ## 7. Ce que je n'ai pas pu vérifier
