@@ -19,7 +19,7 @@ Read `wiki/README.md` first: it is the rule book this command checks against. If
    - **Page front matter** (`concepts/`, `theses/`): the keys of `wiki/README.md` §3; `type` matches the folder; `status` is `llm-draft`, `reviewed` or `rejected`; `confidence` is `high`, `medium` or `low`; a thesis has a `verdict` from the README's list; dates are `YYYY-MM-DD`.
    - **Page body**: a `> [!summary]` callout and a `## Sources` section; no dual `[[x|X]] ([X](path))` links; a page with no link to any raw note at all.
    - **Sources**: every path in `sources:` exists; every raw note in `sources:` also appears in `## Sources`, and the reverse.
-   - **Links**: `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must pass (it names any broken link); raw notes are not checked: their links belong to the source.
+   - **Links**: the test `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must name no broken link in a file under `wiki/` (links broken elsewhere in the vault predate this command: mention them, do not fix them); raw notes are not checked: their links belong to the source.
    - **Orphans**: concept pages that no other note links to. Theses are entry points, built from concept pages, and are not flagged.
    - **Backlog**: raw notes no page has handled (file name without `.md` absent from every page of `concepts/` and `theses/`); `llm-draft` pages created more than 30 days ago; reviewed pages carrying a `Proposed update` callout; `low`-confidence pages; pages whose `verified` is more than a year old.
    - **Size**: pages of 25 KB or more (split, do not trim).

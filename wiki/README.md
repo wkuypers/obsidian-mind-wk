@@ -37,15 +37,16 @@ No other subfolder, no `_index.md`, no `log.md`: `bases/` and `git log` already 
   - `low`: a single secondary source, anecdotal sources, or sources that disagree.
   For a thesis, `confidence` rates the verdict, not the agreement of sources (a thesis weighs disagreeing evidence by design): `high` when strong evidence on both sides was examined and the verdict would survive the strongest counter-evidence found; `medium` when it rests on strong evidence but notable counter-evidence or gaps remain; `low` when evidence is thin or weak.
   Inline markers `(TBC)`, `(unverified)`, `(inferred)` still flag single doubtful claims inside a page.
+- **Links out to the vault.** A page may link to the user's own notes (projects, decisions, references) in `## Related`; those notes are never edited to link back.
 - **`verified`** — the date the page was last checked, against its sources or by `/om-wiki-lint --deep`.
 - **Body**: a `> [!summary]` callout, then sections, then `## Sources`, one line per raw file saying what it contributed: `- [[2026-10-18-slug]] — what this source contributed`. A precise claim ends with a link to the raw file that supports it. A thesis may also cite a web source not yet ingested, by title, URL, author, year and date consulted, listed under `### Not ingested`. A work that has its own raw note is cited by that note only. When sources disagree, say so and attribute each side; do not pick one.
 - **Synthesized, not copied.** A page explains in its own words; quotes stay short and attributed.
-- **Links**: `[[wikilinks]]` only, never the dual `[[x|X]] ([X](path))` form. Every link must resolve: the vault's broken-link check allows none, and `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must pass (it names any broken link).
+- **Links**: `[[wikilinks]]` only, never the dual `[[x|X]] ([X](path))` form. Every link must resolve: the test `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must name no broken link in a file under `wiki/` (links broken elsewhere in the vault predate this command: mention them, do not fix them).
 
 ## 4. Writing
 
 - **Only inside `wiki/`.** Check with `git status --short` at the end: nothing outside `wiki/` may have changed.
-- **Write in the language of the vault's notes**: body, `title`, `description`, `aliases`. Front-matter keys and fixed values (`type`, `status`, `confidence`, `verdict`) stay in English as given; tags follow the vault's existing tags.
+- **Write in the language of the vault's notes**: body, `title`, `description`, `aliases`. Front-matter keys and fixed values (`type`, `status`, `confidence`, `verdict`) stay in English as given; tags follow the vault's existing tags: reuse them, and add a new one only when none fits.
 - **Never rewrite a page that is not `llm-draft`.** For a `reviewed` page, append a `> [!question] Proposed update (YYYY-MM-DD)` callout and let the user merge or drop it. A `rejected` page is not touched.
 - **Promotion is the user's.** A command may list pages worth moving to `reference/`, `brain/` or `work/`; it never moves them.
 - **Bounded runs.** A command writes at most five pages per run and asks before writing (a plan, or for a thesis its decomposition); every `.md` write fires the vault's hooks.

@@ -34,18 +34,19 @@ Compiling turns sources into pages that explain a concept in their own words and
      created: YYYY-MM-DD
      date: YYYY-MM-DD
      description: "<one line, under 150 characters>"
-     tags: [wiki, <one to three topic tags>]
+     tags: [wiki, <one to three topic tags, reused from the vault's existing tags>]
      aliases: ["<title>", <other names the sources use>]
      status: llm-draft
      confidence: high | medium | low
      verified: YYYY-MM-DD
      ```
      `created` and `date` are set once, at creation. On an update, keep them, extend `sources`, reassess `confidence` and set `verified` to today.
-   - **Confidence**, per `wiki/README.md` §3: `high` when several independent, credible sources agree; `medium` for a single credible source or partial agreement; `low` for anecdotal or non-reviewed sources, or sources that disagree. Judge the sources yourself, not their own claims about their reliability. On an update, `confidence` changes only as shown in the approved plan.
+   - **Confidence**: exactly the criteria of `wiki/README.md` §3 (primary and secondary sources). Judge the sources yourself, not their own claims about their reliability. On an update, `confidence` changes only as shown in the approved plan.
+   - **Tags**: reuse the vault's existing tags (`git grep -h -A3 '^tags:' -- '*.md'` shows them); a new tag only when none fits, and the report names it.
    - **Body**, in the vault's language:
      - a `> [!summary]` callout of two or three sentences;
      - sections that explain the concept in your own words. Quotes stay short and attributed. A precise claim (figure, date, definition, attributed position) ends with a link to the raw note that carries it: `[[2026-10-18-slug]]`. When sources disagree, give each side with its source; do not pick one;
-     - `## Related`: links to other pages of `wiki/` only when they exist;
+     - `## Related`: links to other `wiki/` pages, and to the user's own notes the concept bears on — projects, decisions, references — found with `git grep -l -i` on the concept's keywords outside `wiki/`, `templates/` and `.claude/`; one line each saying why. Those notes are linked to, never edited;
      - `## Sources`: one line per raw note, `- [[<raw file name>]] — what this source contributed`.
    - **Write in sections**: a skeleton first, then one section per edit, so a long page is never one huge write.
    - **No source, no claim.** Rephrasing what a source says is the job; adding a fact, a reason or an intuition it does not give is not, even when true. Where the sources are thin, write that they are thin.
@@ -57,7 +58,7 @@ Compiling turns sources into pages that explain a concept in their own words and
    ```
 9. **Check and report.**
    - `git status --short` must show changes under `wiki/concepts/` only; `git status --short -- wiki/raw` must be empty.
-   - Every `[[link]]` you wrote must resolve to an existing note or alias: `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must pass (it names any broken link). Fix or remove any link it reports.
+   - Every `[[link]]` you wrote must resolve to an existing note or alias: the test `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must name no broken link in a file under `wiki/` (links broken elsewhere in the vault predate this command: mention them, do not fix them). Fix or remove any such link in `wiki/`.
    - Report: each page written, with its action and `confidence`; the proposals left on reviewed pages; the back-links not added; the sources still waiting; the pages worth promoting out of `wiki/` once reviewed — listed, never moved.
 
 **Never commit.** The user reviews, sets `status: reviewed` or `rejected`, and commits.
