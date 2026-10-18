@@ -7,7 +7,7 @@ tags: [proposal, llm-wiki]
 # Intégrer les idées de llm-wiki dans le fork obsidian-mind
 
 > [!summary] Statut
-> Proposition d'exploration, branche `explore/llm-wiki`, 2026-10-18. Aucun fichier existant n'a été modifié et aucun code n'a été écrit. Sources lues : ce fork (tag `wk-10.0.0.9`, base amont `v10.0.0`) et `nvk/llm-wiki` au commit `95a042c` (v0.25.1, MIT).
+> Proposition d'exploration, branche `explore/llm-wiki`, 2026-10-18. Aucun fichier existant n'a été modifié et aucun code n'a été écrit. **Toutes les questions de la section 6 sont tranchées (scénario B retenu) ; l'implémentation attend votre feu vert.** Sources lues : ce fork (tag `wk-10.0.0.9`, base amont `v10.0.0`) et `nvk/llm-wiki` au commit `95a042c` (v0.25.1, MIT).
 
 ## 1. Résumé
 
@@ -138,7 +138,7 @@ wiki/
 
 ## 4. Recommandation
 
-**Le scénario B, augmenté de la promotion explicite de A et de la sobriété de C.**
+**Retenu : le scénario B** (décision du 2026-10-18), avec la promotion manuelle décrite en A et la sobriété de C.
 
 - Une seule racine, `wiki/`, avec `inbox/`, `raw/` (écriture unique, marqueur `.verbatim`), `concepts/` et `theses/`.
 - Les règles vont dans `wiki/README.md` (déclaré en `infrastructure`), lu par chaque commande comme `syntheses/README.md`. C'est la seule façon de ne pas dépasser le plafond de `AGENTS.md` : une ligne de pointeur suffit.
@@ -171,6 +171,8 @@ Chaque étape fait un commit sur `explore/llm-wiki`, se défait par `git revert`
    - Ajouter une ligne dans la section « What This Fork Adds » du `README.md`, qui crédite aussi l'idée de Karpathy.
    - Aucune reprise de texte sans cette mention dans le fichier repris (en commentaire HTML en tête de commande).
 1. **Dossier et règles**
+   - Frontmatter d'une page compilée : `title, type, sources, created, date, description, tags, aliases, status, confidence, verified`. `created` et `date` coexistent (question 4).
+   - Texte des commandes et de `wiki/README.md` en anglais ; notes produites en français (question 5).
    - `wiki/README.md` : rôle, sous-dossiers, frontmatter, règles d'écriture, règle de relecture, « ne pas combler par la mémoire du modèle ».
    - `wiki/raw/.verbatim` ; `.gitkeep` dans les sous-dossiers vides.
    - `vault-manifest.json` : `infrastructure` += `wiki/README.md` ; `user_content_roots` += `wiki/`.
@@ -210,13 +212,11 @@ Tranchées le 2026-10-18 :
 2. **Champs en anglais** : `status`, `confidence`, `verified`. Les nouvelles valeurs de `status` (`llm-draft`, `reviewed`, `rejected`) rejoignent la liste de `AGENTS.md` : c'est l'une des lignes à mesurer face au plafond de 436 octets (étape 1).
 3. **Confiance** : `high/medium/low`, avec les critères de llm-wiki. Le vocabulaire `verified/inferred/unverified` reste celui des mémoires du serveur `om`.
 
-Encore ouvertes :
-
-4. **Frontmatter** : vos conventions (`title, type, source, created, tags, aliases`) et celles du coffre (`date, description, tags`, exigées par le hook) se recouvrent en partie. Faut-il porter les deux (`created` et `date` en double), ou apprendre au hook à accepter `created` (encore une modification de code du gabarit) ?
-5. **Langue des fichiers de commande** : les onze commandes du fork sont rédigées en anglais, et seules leurs sorties sont en français (`syntheses/README.md` §4). Votre consigne « interface en français » vise-t-elle aussi le texte des commandes ?
-6. **`raw/` exposé par MCP ?** Avec `wiki/` dans `user_content_roots`, le serveur `om` sert aussi les bruts aux autres dépôts. Faut-il les retirer avec `mcp_never_expose` ?
-7. **Promotion** : une page relue reste-t-elle dans `wiki/` avec `status: reviewed`, ou la déplacez-vous toujours hors de `wiki/` ?
-8. **Seuil de passage à C** : si vous n'utilisez au départ que la thèse, préférez-vous commencer par C (une commande thèse écrivant dans `syntheses/`) et n'ouvrir `wiki/` qu'ensuite ?
+4. **Frontmatter** : on garde les deux dates, `created` (vos conventions) et `date` (exigée par le hook). Aucun changement du hook.
+5. **Langue** : le texte des commandes `om-wiki-*` et de `wiki/README.md` est en anglais, comme le reste du fork. Les notes produites sont en français.
+6. **Exposition MCP** : `raw/` reste dans `wiki/`, et rien n'est retiré avec `mcp_never_expose` : `wiki/` (bruts compris) est servi par `om` comme les autres racines utilisateur. *Interprétation de « reste dans wiki » à confirmer ; elle se défait par une ligne du manifeste.*
+7. **Promotion** : une page relue reste dans `wiki/` avec `status: reviewed`. Vous la transférez ailleurs (`reference/`, `brain/`, `work/`) quand vous le décidez ; le LLM ne la réécrit plus.
+8. **Scénario** : B. `wiki/` est un sas (`inbox/`, `raw/`, `concepts/`, `theses/`) ; le LLM n'écrit que là.
 
 ## 7. Ce que je n'ai pas pu vérifier
 
