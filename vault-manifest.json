@@ -47,6 +47,7 @@
     "thinking/README.md",
     "work/meetings/README.md",
     "syntheses/README.md",
+    "wiki/README.md",
     ".shardmind/**",
     ".shardmindignore"
   ],
@@ -74,7 +75,8 @@
     "brain/*.md",
     "reference/",
     "syntheses/",
-    "memories/"
+    "memories/",
+    "wiki/"
   ],
   "version_fingerprints": {
     "v1": {

@@ -28,6 +28,7 @@ Personal Obsidian vault -- an external brain for work notes, decisions, performa
 | `org/teams/` | Team notes as graph nodes | One note per team |
 | `reference/` | Codebase knowledge, architecture maps | Flow docs, architecture docs |
 | `syntheses/` | Output of the analysis commands (`/om-synthesize`, `/om-distill`…) -- appended, never rewritten | Rules in `syntheses/README.md` |
+| `wiki/` | LLM-compiled layer: `inbox/`, create-only `raw/`, `concepts/`, `theses/` | Rules in `wiki/README.md` |
 | `thinking/` | Scratchpad for drafts and reasoning | Named `YYYY-MM-DD-topic.md` |
 | `templates/` | Obsidian templates | `Work Note.md`, `Decision Record.md`, etc. |
 
@@ -185,7 +186,7 @@ Use tags in frontmatter (not inline):
 
 - **Type**: `work-note`, `decision`, `perf`, `thinking`, `north-star`, `competency`, `person`, `team`, `brain`
 - **Index**: `index`, `moc`
-- **Status** (frontmatter field): `active`, `completed`, `archived`, `proposed`, `accepted`, `deprecated`
+- **Status** (frontmatter field): `active`, `completed`, `archived`, `proposed`, `accepted`, `deprecated`; in `wiki/`: `llm-draft`, `reviewed`, `rejected`
 - **Team** (frontmatter field on people + work notes): your team names, e.g. `Backend`, `Platform`, `Mobile`
 - **Cycle** (frontmatter field on review-related notes): `h2-2024`, `h1-2025`, etc.
 - **Person** (frontmatter field on evidence notes): full name of the person
