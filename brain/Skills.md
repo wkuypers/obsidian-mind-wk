@@ -76,6 +76,14 @@ Read the vault, write only to `syntheses/` — dated sections appended, never a 
 | `/om-contradictions` | Opposing claims, reversed decisions and outdated profiles, classified — corrects nothing |
 | `/om-retrieval-eval` | Recall@k and MRR of the vault's keyword search, with replayable cases |
 
+### Wiki
+
+An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`, compiled pages marked `status: llm-draft` until the user reviews them. Shared rules: `wiki/README.md`. Adapted from [llm-wiki](https://github.com/nvk/llm-wiki) (MIT).
+
+| Command | Purpose |
+|---------|---------|
+| `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only; never compiles |
+
 ## Usage Notes
 
 **Daily:**

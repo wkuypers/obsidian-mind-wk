@@ -463,6 +463,14 @@ Eleven commands that read the vault and write **only** to `syntheses/`. Each one
 | `/om-contradictions` | Opposing claims, reversed decisions and outdated profiles, classified. Corrects nothing |
 | `/om-retrieval-eval` | Recall@k and MRR of the vault's keyword search, with cases you can replay after a change |
 
+### 📚 Wiki Commands
+
+Commands that work **only** inside `wiki/`, an LLM-compiled layer adapted from [llm-wiki](https://github.com/nvk/llm-wiki) (MIT, see `.claude/licenses/llm-wiki.md`). Sources are kept unchanged in `wiki/raw/`; every page the agent compiles stays `status: llm-draft` until you review it. Rules: `wiki/README.md`.
+
+| Command | What It Does |
+|---------|-------------|
+| `/om-wiki-ingest` | Store sources from `wiki/inbox/`, a URL or a file in `wiki/raw/`, verbatim and create-only. Never compiles, never overwrites |
+
 ---
 
 ## 🤖 Subagents
