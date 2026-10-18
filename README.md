@@ -455,7 +455,7 @@ Eleven commands that read the vault and write **only** to `syntheses/`. Each one
 | `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic. Contradictions are attributed, never resolved |
 | `/om-challenge` | Argue against a thesis or decision using the vault's own decisions, failures and opposing positions |
 | `/om-panel` | Four independent readings of one question, then where they agree and where they split |
-| `/om-research` | Bibliographic search with no API key (OpenAlex, Semantic Scholar, arXiv, Persée), aimed at the gap with what the vault already holds. Updates are proposed, never applied |
+| `/om-research` | Bibliographic search with no API key (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; ERIC and Europe PMC by field), aimed at the gap with what the vault already holds. Updates are proposed, never applied |
 | `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
 | `/om-connect` | Bridges and crossing ideas between two distant domains, found through the link graph |
 | `/om-discover` | Three to five next directions drawn from ideas left hanging, open questions and orphan notes, with an explicit ranking |
