@@ -1,0 +1,162 @@
+{
+  "$comment": [
+    "Third-party repositories this fork adapts files from, without being a fork of them.",
+    "Check them: node --experimental-strip-types .claude/scripts/upstream-check.ts (run from the repo root; --help for options).",
+    "pinned = the upstream commit the adaptations were written from, as cited in the license file.",
+    "reviewed = the last upstream commit someone checked the adaptations against; the check reports what changed since.",
+    "adaptations = each local file and the upstream files it adapts. A change there needs a human look.",
+    "context = upstream files the adaptations lean on without copying them. A change there is worth a glance.",
+    "watch_new = upstream globs where a new file may be worth adapting too.",
+    "After a review, --record moves reviewed to the upstream head. Moving pinned is a separate decision: it means the adaptations were brought in line, and the license file's commit moves with it."
+  ],
+  "sources": [
+    {
+      "name": "obsidian-second-brain",
+      "repo": "https://github.com/eugeniughelbur/obsidian-second-brain.git",
+      "branch": "main",
+      "license": ".claude/licenses/obsidian-second-brain.md",
+      "pinned": {
+        "commit": "d0581201a468622c71ef4dedb20650c733e1d328",
+        "date": "2026-10-15"
+      },
+      "reviewed": {
+        "commit": "70054f75e045576b14478cc3126b610ef41c26cb",
+        "date": "2026-10-22",
+        "note": "v0.18.1. None of the adapted commands changed since pinned. Crew (/crew) and the First-Brain variant of /obsidian-init and /obsidian-ingest are new upstream; neither is adapted here."
+      },
+      "adaptations": [
+        {
+          "local": ".claude/commands/om-distill.md",
+          "upstream": [
+            "commands/obsidian-distill.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-synthesize.md",
+          "upstream": [
+            "commands/vault-deep-synthesis.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-challenge.md",
+          "upstream": [
+            "commands/obsidian-challenge.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-panel.md",
+          "upstream": [
+            "commands/obsidian-panel.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-research.md",
+          "upstream": [
+            "commands/research.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-emerge.md",
+          "upstream": [
+            "commands/obsidian-emerge.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-connect.md",
+          "upstream": [
+            "commands/obsidian-connect.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-discover.md",
+          "upstream": [
+            "commands/idea-discovery.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-brainstorm.md",
+          "upstream": [
+            "commands/obsidian-brainstorm.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-contradictions.md",
+          "upstream": [
+            "commands/obsidian-reconcile.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-retrieval-eval.md",
+          "upstream": [
+            "commands/obsidian-retrieval-eval.md"
+          ]
+        }
+      ],
+      "context": [
+        "SKILL.md",
+        "references/ai-first-rules.md"
+      ],
+      "watch_new": [
+        "commands/*.md"
+      ]
+    },
+    {
+      "name": "llm-wiki",
+      "repo": "https://github.com/nvk/llm-wiki.git",
+      "branch": "master",
+      "license": ".claude/licenses/llm-wiki.md",
+      "pinned": {
+        "commit": "95a042c68998559305bc69ac8c482c4e1a415ad3",
+        "date": "2026-10-02"
+      },
+      "reviewed": {
+        "commit": "95a042c68998559305bc69ac8c482c4e1a415ad3",
+        "date": "2026-10-22",
+        "note": "v0.25.1, still the head of master. Open pull requests #108 (five-point confidence) and #109 (footnote and wiki-link checks) would touch what /om-wiki-lint adapts if merged."
+      },
+      "adaptations": [
+        {
+          "local": ".claude/commands/om-wiki-ingest.md",
+          "upstream": [
+            "claude-plugin/commands/ingest.md",
+            "claude-plugin/skills/wiki-manager/references/ingestion.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-wiki-compile.md",
+          "upstream": [
+            "claude-plugin/commands/compile.md",
+            "claude-plugin/skills/wiki-manager/references/compilation.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-wiki-thesis.md",
+          "upstream": [
+            "claude-plugin/commands/research.md",
+            "claude-plugin/commands/thesis.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-wiki-lint.md",
+          "upstream": [
+            "claude-plugin/commands/lint.md",
+            "claude-plugin/skills/wiki-manager/references/linting.md"
+          ]
+        },
+        {
+          "local": "wiki/README.md",
+          "upstream": [
+            "claude-plugin/skills/wiki-manager/references/wiki-structure.md",
+            "claude-plugin/skills/wiki-manager/references/query-lite.md"
+          ]
+        }
+      ],
+      "context": [
+        "claude-plugin/skills/wiki-manager/SKILL.md"
+      ],
+      "watch_new": [
+        "claude-plugin/commands/*.md"
+      ]
+    }
+  ]
+}
