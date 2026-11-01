@@ -52,6 +52,7 @@ Custom slash commands, subagents, and reusable workflows. Defined in `.claude/co
 | Command | Purpose |
 |---------|---------|
 | `/om-correct` | Sweep a corrected fact through the vault — semantic + literal search, applies at the single source, replaces restatements with links, preserves notes recording what was believed at the time. The acting half of Write-Correctness Law 2 |
+| `/om-checkin` | Ask whether old person, team and active-work notes still hold: up to three notes, one to three facts each. "Same" stamps `last-checked`, news goes through `/om-correct`. Adapted from [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) (MIT) |
 | `/om-vault-audit` | Deep structural audit — indexes, frontmatter, links, Bases, folder placement, stale context |
 | `/om-vault-upgrade` | Upgrade this vault through ShardMind, keeping local improvements and listing them as upstream candidates; or import content from an existing vault — detects version, classifies notes, transforms frontmatter, rebuilds indexes |
 | `/om-project-archive` | Move completed project from `work/active/` to `work/archive/YYYY/`, update all indexes — moves whole `active/<Topic>/` clusters intact |

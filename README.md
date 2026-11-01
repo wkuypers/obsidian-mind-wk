@@ -437,6 +437,7 @@ Defined in `.claude/commands/`. Run them in Claude Code, Codex CLI, or Gemini CL
 | `/om-review-peer` | Write a peer review — projects, principles, performance summary |
 | `/om-tidy` | Self-maintenance — acts on every hygiene flag: archive, group, split. Never deletes, never commits |
 | `/om-correct` | Sweep a corrected fact — applies it at the single source, links restatements, preserves dated records |
+| `/om-checkin` | Asks whether old person, team and project notes still hold, three at most; what changed goes through `/om-correct` |
 | `/om-vault-audit` | Audit indexes, links, orphans, stale context |
 | `/om-vault-upgrade` | Upgrade this vault through ShardMind (keeps your local improvements), or import content from an existing vault — version detection, classification, migration |
 | `/om-prep-1on1` | Prep for an upcoming 1:1 — load person context, open items, suggested agenda |

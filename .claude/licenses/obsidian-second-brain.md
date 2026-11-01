@@ -1,6 +1,6 @@
 # obsidian-second-brain — license
 
-The analysis commands `om-distill`, `om-synthesize`, `om-challenge`, `om-panel`, `om-research`, `om-emerge`, `om-connect`, `om-discover`, `om-brainstorm`, `om-contradictions` and `om-retrieval-eval` adapt commands of obsidian-second-brain (https://github.com/eugeniughelbur/obsidian-second-brain, commit f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff, 2026-10-28). Its license follows, verbatim.
+The analysis commands `om-distill`, `om-synthesize`, `om-challenge`, `om-panel`, `om-research`, `om-emerge`, `om-connect`, `om-discover`, `om-brainstorm`, `om-contradictions` and `om-retrieval-eval` adapt commands of obsidian-second-brain (https://github.com/eugeniughelbur/obsidian-second-brain, commit f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff, 2026-10-28), and `om-checkin` adapts its `/obsidian-checkin` command from the same commit. Its license follows, verbatim.
 
 ```
 MIT License

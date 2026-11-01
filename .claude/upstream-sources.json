@@ -22,7 +22,7 @@
       "reviewed": {
         "commit": "f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff",
         "date": "2026-11-01",
-        "note": "v0.20.0 plus Unreleased (f79c64f). Adapted: the quote proof obsidian-reconcile gained in c349645, ported to om-contradictions as an inline python check instead of verify_quotes.py; pinned moved to this head with it. Not adapted: /obsidian-checkin (new), directory and Word/ODT ingestion, vault_search.py, check_notes.py, the raw session archive of /obsidian-save."
+        "note": "v0.20.0 plus Unreleased (f79c64f). Adapted: the quote proof obsidian-reconcile gained in c349645, ported to om-contradictions as an inline python check instead of verify_quotes.py; pinned moved to this head with it. /obsidian-checkin (new) adapted the same day as om-checkin, without its queue script or nudge and answer modes. Not adapted: directory and Word/ODT ingestion, vault_search.py, check_notes.py, the raw session archive of /obsidian-save."
       },
       "adaptations": [
         {
@@ -89,6 +89,13 @@
           "local": ".claude/commands/om-retrieval-eval.md",
           "upstream": [
             "commands/obsidian-retrieval-eval.md"
+          ]
+        },
+        {
+          "local": ".claude/commands/om-checkin.md",
+          "upstream": [
+            "commands/obsidian-checkin.md",
+            "scripts/checkin.py"
           ]
         }
       ],
