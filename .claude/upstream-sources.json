@@ -16,13 +16,13 @@
       "branch": "main",
       "license": ".claude/licenses/obsidian-second-brain.md",
       "pinned": {
-        "commit": "d0581201a468622c71ef4dedb20650c733e1d328",
-        "date": "2026-10-15"
+        "commit": "f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff",
+        "date": "2026-10-28"
       },
       "reviewed": {
-        "commit": "70054f75e045576b14478cc3126b610ef41c26cb",
-        "date": "2026-10-22",
-        "note": "v0.18.1. None of the adapted commands changed since pinned. Crew (/crew) and the First-Brain variant of /obsidian-init and /obsidian-ingest are new upstream; neither is adapted here."
+        "commit": "f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff",
+        "date": "2026-11-01",
+        "note": "v0.20.0 plus Unreleased (f79c64f). Adapted: the quote proof obsidian-reconcile gained in c349645, ported to om-contradictions as an inline python check instead of verify_quotes.py; pinned moved to this head with it. Not adapted: /obsidian-checkin (new), directory and Word/ODT ingestion, vault_search.py, check_notes.py, the raw session archive of /obsidian-save."
       },
       "adaptations": [
         {
