@@ -22,4 +22,12 @@ Specialized agents in `.claude/agents/` for heavy operations. They run in isolat
 | `vault-librarian` | Deep vault maintenance -- orphans, broken links, stale notes | `/om-vault-audit` |
 | `review-fact-checker` | Verifies every claim in a review draft against vault sources | `/om-self-review`, `/om-review-peer` |
 | `vault-migrator` | Classifies, transforms, and migrates content from a source vault | `/om-vault-upgrade` |
+| `plan-theo` | Drafts the argued plan of a theology-of-ministries dossier: provisional theses, material, traditions per section | `/om-dossier-theo` |
+| `sources-primaires` | Builds the dossier's primary-source file: the author's corpus, then Scripture and early Church, liturgy, magisterium and law, ecumenical dialogues | `/om-dossier-theo` |
+| `litterature-secondaire` | Gathers the dossier's secondary literature, vault first, then key-less databases; reports which ones answered | `/om-dossier-theo` |
+| `verificateur-citations` | Keeps the dossier's closed citation register; the only agent that writes it | `/om-dossier-theo` |
+| `redacteur-theo` | Drafts or revises one dossier section, citing only the register | `/om-dossier-theo` |
+| `relecteur-canoniste` | Reviews a draft section as a canon lawyer; returns critique and scores | `/om-dossier-theo` |
+| `relecteur-oecumeniste` | Reviews a draft section as an ecumenist; returns critique and scores | `/om-dossier-theo` |
+| `relecteur-historien` | Reviews a draft section as a historian; returns critique and scores | `/om-dossier-theo` |
 

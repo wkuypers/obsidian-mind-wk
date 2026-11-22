@@ -19,7 +19,7 @@
 > **An Obsidian vault that gives AI coding agents persistent memory.** Built for Claude Code, with working hooks for Codex CLI and Gemini CLI. Start a session, talk about your day, and the agent handles the rest — notes, links, indexes, performance tracking. Every conversation builds on the last.
 
 > [!NOTE]
-> This fork adds analysis commands, `/om-history` and a few hygiene fixes. See [What This Fork Adds](#-what-this-fork-adds).
+> This fork adds analysis commands, a research-dossier command, `/om-history` and a few hygiene fixes. See [What This Fork Adds](#-what-this-fork-adds).
 
 ---
 
@@ -456,7 +456,7 @@ Eleven commands that read the vault and write **only** to `syntheses/`. Each one
 | `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic. Contradictions are attributed, never resolved |
 | `/om-challenge` | Argue against a thesis or decision using the vault's own decisions, failures and opposing positions |
 | `/om-panel` | Four independent readings of one question, then where they agree and where they split |
-| `/om-research` | Bibliographic search with no API key (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; ERIC and Europe PMC by field), aimed at the gap with what the vault already holds. Updates are proposed, never applied |
+| `/om-research` | Bibliographic search with no API key (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; the BnF, SUDOC and K10plus library catalogues for books; ERIC and Europe PMC by field), aimed at the gap with what the vault already holds. Updates are proposed, never applied |
 | `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
 | `/om-connect` | Bridges and crossing ideas between two distant domains, found through the link graph |
 | `/om-discover` | Three to five next directions drawn from ideas left hanging, open questions and orphan notes, with an explicit ranking |
@@ -475,6 +475,16 @@ Commands that work **only** inside `wiki/`, an LLM-compiled layer adapted from [
 | `/om-wiki-thesis` | Test a claim for and against. You confirm the decomposition first; evidence from the vault and the web is rated, the weaker side gets a second look, and the page ends with a verdict and its confidence |
 | `/om-wiki-lint` | Check `wiki/` against its rules: layout, raw sources left unchanged, front matter, sources, links, backlog. With `--deep`, key claims are searched on the web for and against. Reports first; changes nothing you have not approved |
 
+### 📜 Research Dossier
+
+One command and eight subagents that build a research dossier in theology of ministries from the vault's notes, in one folder under `work/active/`. It stops for your validation after the plan, after the citation register and before any review. The thesis stays yours: the agents gather, verify, structure and criticise. A vault fixes its own note names, library rules and planning principles in `.claude/rules/local.md`, which the command reads first.
+
+| Command | What It Does |
+|---------|-------------|
+| `/om-dossier-theo` | Plan, primary sources (by layer, each with its own verification method), secondary literature, a closed citation register, drafting section by section, then up to three rounds of critique by a canon lawyer, an ecumenist and a historian. A revision is kept only if no reviewer's score drops on any axis |
+
+`.claude/scripts/dossier-check.ts` checks the two rules that must not rest on an agent's word: every footnote of a draft is a citable key of the register, and no score dropped between two review rounds.
+
 ---
 
 ## 🤖 Subagents
@@ -492,6 +502,14 @@ Specialized agents that run in isolated context windows. They handle heavy opera
 | `vault-librarian` | Deep vault maintenance — orphans, broken links, stale notes | `/om-vault-audit` |
 | `review-fact-checker` | Verify every claim in a review draft against vault sources | `/om-self-review`, `/om-review-peer` |
 | `vault-migrator` | Classify, transform, and migrate content from a source vault | `/om-vault-upgrade` |
+| `plan-theo` | Drafts the argued plan of a theology-of-ministries dossier | `/om-dossier-theo` |
+| `sources-primaires` | Builds the dossier's primary-source file, layer by layer | `/om-dossier-theo` |
+| `litterature-secondaire` | Gathers the dossier's secondary literature, vault first, then key-less databases | `/om-dossier-theo` |
+| `verificateur-citations` | Keeps the closed citation register — the only agent that writes it | `/om-dossier-theo` |
+| `redacteur-theo` | Drafts or revises one section, citing only the register | `/om-dossier-theo` |
+| `relecteur-canoniste` | Reviews a draft section as a canon lawyer | `/om-dossier-theo` |
+| `relecteur-oecumeniste` | Reviews a draft section as an ecumenist | `/om-dossier-theo` |
+| `relecteur-historien` | Reviews a draft section as a historian | `/om-dossier-theo` |
 
 > [!NOTE]
 > Subagents are defined in `.claude/agents/`. You can add your own for domain-specific workflows.
@@ -581,8 +599,8 @@ templates/              Obsidian templates with YAML frontmatter
 
 .claude/
   rules/                Claude Code-only guidance, loaded beside AGENTS.md
-  commands/             32 slash commands
-  agents/               10 subagents
+  commands/             38 slash commands
+  agents/               18 subagents
   scripts/              Hook scripts + charcount.ts utility
   skills/               Obsidian + QMD skills, and the obsidian-mind mod
   settings.json         5 hooks configuration
@@ -756,6 +774,7 @@ This is a fork of [breferrari/obsidian-mind](https://github.com/breferrari/obsid
 - **More robust wikilink checks.** Names are compared in Unicode NFC. macOS and iCloud store accented filenames as NFD, so links to them used to be reported as broken. Office files (`.docx`, `.xlsx`, `.pptx`, `.csv`…) now count as assets.
 - **`wiki/`, an LLM-compiled layer (in progress).** Adapted from [nvk/llm-wiki](https://github.com/nvk/llm-wiki) (MIT), itself an implementation of Andrej Karpathy's "LLM Wiki" idea. Sources dropped in `wiki/inbox/` are kept unchanged in `wiki/raw/` and compiled into concept and thesis pages. Every page the agent writes is marked `status: llm-draft` with a `confidence` until you review it, and the agent writes nowhere else. The rules are in `wiki/README.md`; the license and credit are in `.claude/licenses/llm-wiki.md`.
 - **Checking the adapted sources.** The analysis commands and `wiki/` adapt files from repositories this fork is not a fork of. `.claude/upstream-sources.json` records, for each one, the upstream commit the adaptations were written from, the last commit they were reviewed against, and which upstream files each local file comes from. `node --experimental-strip-types .claude/scripts/upstream-check.ts` clones each repository into a temp folder and reports what changed since the last review: adapted files first, with the local file concerned, then context files and new upstream files. It exits 1 when an adapted or context file changed. After a review, `--record` moves the reviewed commit to the upstream head; `--since pinned` diffs from the original commit instead, and `--diff` prints the changes.
+- **`/om-dossier-theo`, a research dossier in theology of ministries.** A plan before any prose, a closed citation register kept by one agent, drafting that may cite nothing else, and a review loop with three reviewers in separate contexts (see [Research Dossier](#-research-dossier)). The architecture transposes [PaperOrchestra](https://arxiv.org/abs/2604.05018); no code or prompt is taken from it, and its stopping rule is made stricter: a revision is reverted if any axis drops. As of 2026-11-22, the plan, source and register stages have run on a real question; the drafting and review stages have not run yet. Each gathering agent used on the order of 200,000 tokens. The subagents reach only the vault and the open web, so references held in a reference manager or document database are collated by the main session.
 - **"Local changes" sections.** The notes each vault is expected to edit (`Home.md`, `brain/*.md`, indexes, `.gitignore`) end with a `Changements locaux` heading. The template leaves it empty, and a vault's own additions go below it, which keeps template merges clean.
 
 ---
@@ -766,6 +785,7 @@ This is a fork of [breferrari/obsidian-mind](https://github.com/breferrari/obsid
 - [James Bedford](https://x.com/jameesy) — Vault structure philosophy, separation of AI-generated content
 - [arscontexta](https://github.com/agenticnotetaking/arscontexta) — Progressive disclosure via description fields, session hooks
 - [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) — The analysis commands this fork adapts
+- [PaperOrchestra](https://arxiv.org/abs/2604.05018) — The multi-agent architecture `/om-dossier-theo` transposes (closed citation corpus, score-gated revisions)
 
 ---
 

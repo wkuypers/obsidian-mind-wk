@@ -69,7 +69,7 @@ Read the vault, write only to `syntheses/` — dated sections appended, never a 
 | `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic — contradictions attributed, never resolved |
 | `/om-challenge` | Argue against a thesis or decision from the vault's own decisions, failures and opposing positions |
 | `/om-panel` | Four independent readings of a question, then where they agree and split |
-| `/om-research` | Key-less bibliographic search (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; ERIC and Europe PMC by field) for the gap with what the vault holds; updates proposed, never applied |
+| `/om-research` | Key-less bibliographic search (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; BnF, SUDOC and K10plus catalogues for books; ERIC and Europe PMC by field) for the gap with what the vault holds; updates proposed, never applied |
 | `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
 | `/om-connect` | Bridges and crossing ideas between two distant domains, through the link graph |
 | `/om-discover` | Three to five next directions from ideas left hanging, open questions and orphan notes, with a stated ranking |
@@ -87,6 +87,14 @@ An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`
 | `/om-wiki-compile` | Compile raw sources into concept pages in `wiki/concepts/`, each `llm-draft` with a confidence and its sources; reviewed pages only get a proposal callout |
 | `/om-wiki-thesis` | Test a claim for and against: decomposition you confirm, vault and web evidence rated, a second look at the weaker side, a verdict with its confidence, in `wiki/theses/` |
 | `/om-wiki-lint` | Check `wiki/` against its rules (layout, raw immutability, front matter, sources, links, backlog); `--deep` checks key claims on the web for and against. Changes nothing without approval |
+
+### Research Dossier
+
+Builds one folder under `work/active/` from the vault's notes, stopping for the user's validation between stages. Architecture transposed from PaperOrchestra (arXiv:2604.05018): a plan before any prose, a closed citation register, and a revision kept only when no reviewer's score drops. Checks: `.claude/scripts/dossier-check.ts`.
+
+| Command | Purpose |
+|---------|---------|
+| `/om-dossier-theo` | Research dossier in theology of ministries: plan, primary sources and secondary literature, closed citation register, drafting, then up to three rounds of critique by a canon lawyer, an ecumenist and a historian. The thesis stays the user's |
 
 ## Usage Notes
 
@@ -126,6 +134,14 @@ An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`
 | `vault-librarian` | Deep vault maintenance — orphan detection, broken links, frontmatter validation, stale notes | `/om-vault-audit` |
 | `review-fact-checker` | Verify every claim in a review draft against vault sources | `/om-self-review`, `/om-review-peer` |
 | `vault-migrator` | Classify, transform, and migrate content from a source vault | `/om-vault-upgrade` |
+| `plan-theo` | Draft the argued plan of a theology-of-ministries dossier: provisional theses, material and traditions per section | `/om-dossier-theo` |
+| `sources-primaires` | Build the dossier's primary-source file: the author's corpus, then Scripture and early Church, liturgy, magisterium and law, ecumenical dialogues | `/om-dossier-theo` |
+| `litterature-secondaire` | Gather the dossier's secondary literature, vault first, then key-less databases, reporting which answered | `/om-dossier-theo` |
+| `verificateur-citations` | Keep the dossier's closed citation register — the only agent that writes it | `/om-dossier-theo` |
+| `redacteur-theo` | Draft or revise one dossier section, citing only the register | `/om-dossier-theo` |
+| `relecteur-canoniste` | Review a draft section as a canon lawyer — critique and scores | `/om-dossier-theo` |
+| `relecteur-oecumeniste` | Review a draft section as an ecumenist — critique and scores | `/om-dossier-theo` |
+| `relecteur-historien` | Review a draft section as a historian — critique and scores | `/om-dossier-theo` |
 
 Subagents run in isolated context windows via `.claude/agents/`. They don't pollute the main conversation.
 
