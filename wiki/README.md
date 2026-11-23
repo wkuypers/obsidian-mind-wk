@@ -29,7 +29,7 @@ No other subfolder, no `_index.md`, no `log.md`: `bases/` and `git log` already 
 
 ## 3. Compiled pages
 
-- **Front matter**: `title`, `type` (`concept` or `thesis`), `sources` (list of `wiki/raw/...` paths), `created`, `date`, `description`, `tags`, `aliases`, `status`, `confidence`, `verified`. A thesis adds `verdict`: `supported`, `partially-supported`, `insufficient-evidence`, `contradicted` or `mixed`; its `confidence` is the confidence in that verdict.
+- **Front matter**: `title`, `type` (`concept` or `thesis`), `sources` (list of `wiki/raw/...` paths), `created`, `date`, `description`, `tags`, `aliases`, `status`, `confidence`, and `verified` once the page has been checked. A thesis adds `verdict`: `supported`, `partially-supported`, `insufficient-evidence`, `contradicted` or `mixed`; its `confidence` is the confidence in that verdict.
 - **`status`** — `llm-draft` when the agent writes the page; `reviewed` once the user has read and accepted it; `rejected` when the user discards it. Only the user moves a page out of `llm-draft`.
 - **`confidence`** — page level, set by the agent, lowered only with the user's agreement:
   - `high`: several independent primary sources (peer-reviewed studies, official data) agree;
@@ -38,7 +38,7 @@ No other subfolder, no `_index.md`, no `log.md`: `bases/` and `git log` already 
   For a thesis, `confidence` rates the verdict, not the agreement of sources (a thesis weighs disagreeing evidence by design): `high` when strong evidence on both sides was examined and the verdict would survive the strongest counter-evidence found; `medium` when it rests on strong evidence but notable counter-evidence or gaps remain; `low` when evidence is thin or weak.
   Inline markers `(TBC)`, `(unverified)`, `(inferred)` still flag single doubtful claims inside a page.
 - **Links out to the vault.** A page may link to the user's own notes (projects, decisions, references) in `## Related`; those notes are never edited to link back.
-- **`verified`** — the date the page was last checked, against its sources or by `/om-wiki-lint --deep`.
+- **`verified`** — the date the page's claims were last checked by something other than its own compilation: a `/om-wiki-lint --deep` pass the user approved, or the user's own check. Compiling or recompiling a page never sets or advances it, so a page never checked has no `verified`; `created`, `date` and `git log` say when it was written.
 - **Body**: a `> [!summary]` callout, then sections, then `## Sources`, one line per raw file saying what it contributed: `- [[2026-10-18-slug]] — what this source contributed`. A precise claim ends with a link to the raw file that supports it. A thesis may also cite a web source not yet ingested, by title, URL, author, year and date consulted, listed under `### Not ingested`. A work that has its own raw note is cited by that note only. When sources disagree, say so and attribute each side; do not pick one.
 - **Synthesized, not copied.** A page explains in its own words; quotes stay short and attributed.
 - **Links**: `[[wikilinks]]` only, never the dual `[[x|X]] ([X](path))` form. Every link must resolve: the test `cd .claude/scripts && node --experimental-strip-types --test tests/vault-wikilinks.test.ts` must name no broken link in a file under `wiki/` (links broken elsewhere in the vault predate this command: mention them, do not fix them).
@@ -56,4 +56,4 @@ No other subfolder, no `_index.md`, no `log.md`: `bases/` and `git log` already 
 
 ## Credits
 
-The ideas and conventions of this layer adapt [llm-wiki](https://github.com/nvk/llm-wiki) by nvk (commit `95a042c`, 2026-10-02), MIT License, Copyright (c) 2026 nvk, an implementation of Andrej Karpathy's "LLM Wiki" idea. The full license text is in `.claude/licenses/llm-wiki.md`. Adaptations: one folder inside the vault instead of an external hub; raw sources strictly create-only (no refresh overwrite, no lint move); a review `status` on every compiled page; wikilinks only; no index, log, session capture or Python helper.
+The ideas and conventions of this layer adapt [llm-wiki](https://github.com/nvk/llm-wiki) by nvk (commit `d60674f`, 2026-10-25), MIT License, Copyright (c) 2026 nvk, an implementation of Andrej Karpathy's "LLM Wiki" idea. The full license text is in `.claude/licenses/llm-wiki.md`. Adaptations: one folder inside the vault instead of an external hub; raw sources strictly create-only (no refresh overwrite, no lint move); a review `status` on every compiled page; wikilinks only; no index, log, session capture or Python helper.

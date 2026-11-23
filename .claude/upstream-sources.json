@@ -20,9 +20,9 @@
         "date": "2026-10-28"
       },
       "reviewed": {
-        "commit": "f79c64f3f03ee25ec1660c8a30ebe7f4f8e044ff",
-        "date": "2026-11-01",
-        "note": "v0.20.0 plus Unreleased (f79c64f). Adapted: the quote proof obsidian-reconcile gained in c349645, ported to om-contradictions as an inline python check instead of verify_quotes.py; pinned moved to this head with it. /obsidian-checkin (new) adapted the same day as om-checkin, without its queue script or nudge and answer modes. Not adapted: directory and Word/ODT ingestion, vault_search.py, check_notes.py, the raw session archive of /obsidian-save."
+        "commit": "7f4ddfdafa4e4652b01209f1847c3a3fc7d07754",
+        "date": "2026-11-24",
+        "note": "v0.20.0 plus Unreleased (7f4ddfd). Nothing adapted: the adapted commands changed only by an author-credit footer (the fork's Adapts headers and .claude/licenses/obsidian-second-brain.md already carry the credit and the MIT notice; the footer's contact and consulting links are not license terms), checkin.py by an SPDX header, research.md by an opt-in Keenable web source (om-research queries scholarly databases only). Context: SKILL.md drops the curl-to-shell bootstrap; ai-first-rules.md makes a speculation source a proposal at compile time, which every om-* write already is, since nothing is written without approval."
       },
       "adaptations": [
         {
@@ -113,13 +113,13 @@
       "branch": "master",
       "license": ".claude/licenses/llm-wiki.md",
       "pinned": {
-        "commit": "95a042c68998559305bc69ac8c482c4e1a415ad3",
-        "date": "2026-10-02"
+        "commit": "d60674ff785e5c6d35322657d7839a7c0bdd3ca7",
+        "date": "2026-10-25"
       },
       "reviewed": {
-        "commit": "95a042c68998559305bc69ac8c482c4e1a415ad3",
-        "date": "2026-10-22",
-        "note": "v0.25.1, still the head of master. Open pull requests #108 (five-point confidence) and #109 (footnote and wiki-link checks) would touch what /om-wiki-lint adapts if merged."
+        "commit": "d60674ff785e5c6d35322657d7839a7c0bdd3ca7",
+        "date": "2026-11-24",
+        "note": "v1.0.0 (d60674f). Adapted: verified records only a check other than compilation (a /om-wiki-lint --deep pass the user approved, or the user's own check), so om-wiki-compile and om-wiki-thesis no longer set it, lint accepts its absence and lists never-verified pages, and the Wiki base shows them under Check due; lint reports footnote references without a definition and unused definitions. pinned moved to this head with it. Not adapted: the five-point confidence (the fork's three levels each have a source criterion, the two new ones have none), raw namespaces and --raw-subdir (wiki/raw/ is flat by design), manifest-only Git ingestion, the owner fix for raw pointers (raw notes hold their content), the C20 engine and identity checks (no hub), the ambiguous wikilink check (the vault-wide link test owns resolution), the refresh workflow (raw is already create-only, a newer version is a new file)."
       },
       "adaptations": [
         {
@@ -163,6 +163,83 @@
       ],
       "watch_new": [
         "claude-plugin/commands/*.md"
+      ]
+    },
+    {
+      "name": "paper-orchestra",
+      "repo": "https://github.com/google-research/paper-orchestra.git",
+      "branch": "main",
+      "license": ".claude/licenses/paper-orchestra.md",
+      "pinned": {
+        "commit": "d9bae997e793a015ed38bb1605be9eb58c00284f",
+        "date": "2026-11-15"
+      },
+      "reviewed": {
+        "commit": "d9bae997e793a015ed38bb1605be9eb58c00284f",
+        "date": "2026-11-24",
+        "note": "Head of main (d9bae99). Adapted: the outline agent's two-level search plan, the literature-review rater's caps, the side-by-side comparison in both orders. Not adapted: the citation quota, the refinement prompt's rule never to state a limitation, the 'gain covers drop' acceptance rule, plotting, LaTeX templates and the PDF formatting review. Watched for later: P0/P1 citation priorities (citation_f1.py) and fuzzy title matching against a database (scholar_utils.py)."
+      },
+      "adaptations": [
+        {
+          "local": ".claude/commands/om-dossier-theo.md",
+          "upstream": [
+            "methods/paper_writer.py",
+            "methods/agents/content_refinement_agent.py",
+            "autoraters/sxs_paper_quality.py"
+          ]
+        },
+        {
+          "local": ".claude/agents/plan-theo.md",
+          "upstream": [
+            "methods/prompts/outline_agent.py"
+          ]
+        },
+        {
+          "local": ".claude/agents/litterature-secondaire.md",
+          "upstream": [
+            "methods/agents/literature_review_agent.py"
+          ]
+        },
+        {
+          "local": ".claude/agents/relecteur-canoniste.md",
+          "upstream": [
+            "autoraters/prompts/lit_review_quality_prompts.py",
+            "autoraters/prompts/sxs_quality_prompts.py"
+          ]
+        },
+        {
+          "local": ".claude/agents/relecteur-historien.md",
+          "upstream": [
+            "autoraters/prompts/lit_review_quality_prompts.py",
+            "autoraters/prompts/sxs_quality_prompts.py"
+          ]
+        },
+        {
+          "local": ".claude/agents/relecteur-oecumeniste.md",
+          "upstream": [
+            "autoraters/prompts/lit_review_quality_prompts.py",
+            "autoraters/prompts/sxs_quality_prompts.py"
+          ]
+        },
+        {
+          "local": ".claude/scripts/lib/dossier-check.ts",
+          "upstream": [
+            "methods/agents/content_refinement_agent.py",
+            "autoraters/sxs_paper_quality.py"
+          ]
+        }
+      ],
+      "context": [
+        "methods/prompts/literature_review_agent.py",
+        "methods/prompts/section_writing_agent.py",
+        "methods/prompts/content_refinement_agent.py",
+        "autoraters/citation_f1.py",
+        "utils/scholar_utils.py"
+      ],
+      "watch_new": [
+        "methods/prompts/*.py",
+        "autoraters/*.py",
+        "autoraters/prompts/*.py"
       ]
     }
   ]

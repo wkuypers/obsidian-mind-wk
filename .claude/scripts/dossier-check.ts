@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * CLI for the two deterministic checks of /om-dossier-theo.
+ * CLI for the deterministic checks of /om-dossier-theo.
  *
  * Usage:
  *   node --experimental-strip-types dossier-check.ts citations <register.md> <draft.md> [<draft.md>…]
  *   node --experimental-strip-types dossier-check.ts scores <previous-review.md> <current-review.md>
+ *   node --experimental-strip-types dossier-check.ts blind <previous-draft.md> <current-draft.md> <out-dir>
+ *   node --experimental-strip-types dossier-check.ts pairwise <comparison-order-1.md> <comparison-order-2.md>
  *
  * Exit codes:
  *   citations — 0 every footnote is a citable register key; 1 at least one is
@@ -12,13 +14,23 @@
  *   scores    — 0 no axis dropped (keep the revision); 1 an axis dropped
  *               (restore the previous version); 2 usage error, missing file,
  *               or an axis missing from either review.
+ *   blind     — writes <out-dir>/order-1/{Version 1,Version 2}.md (previous
+ *               first) and <out-dir>/order-2/ (current first), each copy
+ *               without frontmatter or revision log. 0 written; 2 usage
+ *               error, missing file, or two versions that read the same.
+ *   pairwise  — reads the comparisons of order-1 and order-2. 0 the previous
+ *               version wins on no axis in either order (keep the revision);
+ *               1 it wins somewhere, or the verdict flips with the order
+ *               (restore the previous version); 2 usage error, missing file,
+ *               or an axis missing or unreadable in either comparison.
  *
  * An empty register or a review without scores never passes: a check that
  * looked at nothing must not report success.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { checkCitations, compareScores, parseRegister, parseScores } from "./lib/dossier-check.ts";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { blindCopy, checkCitations, comparePairwise, compareScores, parseComparison, parseRegister, parseScores } from "./lib/dossier-check.ts";
 
 function fail(message: string): never {
 	process.stderr.write(`${message}\n`);
@@ -53,6 +65,32 @@ if (mode === "citations") {
 	for (const line of lines) process.stdout.write(`${line}\n`);
 	process.stdout.write(`${verdict.toUpperCase()}\n`);
 	process.exit(verdict === "keep" ? 0 : verdict === "revert" ? 1 : 2);
+} else if (mode === "blind") {
+	const [prevPath, currPath, outDir] = files;
+	if (!prevPath || !currPath || !outDir || files.length !== 3) fail("Usage: dossier-check.ts blind <previous-draft.md> <current-draft.md> <out-dir>");
+	const previous = blindCopy(read(prevPath));
+	const current = blindCopy(read(currPath));
+	if (previous === current) fail("The two versions read the same once blinded: nothing to compare.");
+	const orders: ReadonlyArray<readonly [string, string, string]> = [
+		["order-1", previous, current],
+		["order-2", current, previous],
+	];
+	for (const [order, first, second] of orders) {
+		const dir = join(outDir, order);
+		mkdirSync(dir, { recursive: true });
+		writeFileSync(join(dir, "Version 1.md"), first);
+		writeFileSync(join(dir, "Version 2.md"), second);
+		process.stdout.write(`${dir}\n`);
+	}
+	process.stdout.write("order-1 shows the previous version as Version 1; order-2 shows the current one first.\n");
+	process.exit(0);
+} else if (mode === "pairwise") {
+	const [order1Path, order2Path] = files;
+	if (!order1Path || !order2Path || files.length !== 2) fail("Usage: dossier-check.ts pairwise <comparison-order-1.md> <comparison-order-2.md>");
+	const { verdict, lines } = comparePairwise(parseComparison(read(order1Path)), parseComparison(read(order2Path)));
+	for (const line of lines) process.stdout.write(`${line}\n`);
+	process.stdout.write(`${verdict.toUpperCase()}\n`);
+	process.exit(verdict === "keep" ? 0 : verdict === "revert" ? 1 : 2);
 } else {
-	fail("Usage: dossier-check.ts citations|scores <files…>");
+	fail("Usage: dossier-check.ts citations|scores|blind|pairwise <files…>");
 }

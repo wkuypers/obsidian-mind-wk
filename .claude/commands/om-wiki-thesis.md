@@ -45,8 +45,8 @@ A thesis page is not an argument for the claim: it is the record of an honest at
      status: llm-draft
      verdict: supported | partially-supported | insufficient-evidence | contradicted | mixed
      confidence: high | medium | low
-     verified: YYYY-MM-DD
      ```
+     No `verified`: testing the claim is how the page is written, not a later check of it (`wiki/README.md` §3).
      `confidence` is the confidence in the verdict, by the thesis criteria of `wiki/README.md` §3. A section `## Mechanism` may sit between Evidence against and Nuances when the mechanism search found something worth keeping apart.
    - **Tags**: reuse the vault's existing tags (`git grep -h -A3 '^tags:' -- '*.md'` shows them); a new tag only when none fits, and the report names it.
    - **Body**, in the vault's language:

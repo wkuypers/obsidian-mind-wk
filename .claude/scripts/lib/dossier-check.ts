@@ -6,7 +6,13 @@
  *
  * 1. The citation register is closed: every footnote of a draft is a key of
  *    the register, with a status that allows citing it.
- * 2. A revision is kept only if no reviewer's score dropped on any axis.
+ * 2. A revision is kept only if no reviewer's score dropped on any axis —
+ *    or if a blind comparison of the two versions, run in both orders, shows
+ *    the drop was noise: the previous version wins on no axis in either order.
+ *
+ * The comparison in both orders adapts PaperOrchestra's side-by-side raters
+ * (https://github.com/google-research/paper-orchestra), Apache License 2.0,
+ * Copyright 2026 Google LLC. Full license: .claude/licenses/paper-orchestra.md
  */
 
 export type Citability = "citable" | "citable-tbc" | "not-citable";
@@ -152,8 +158,9 @@ export interface ScoreComparison {
 
 /**
  * Stricter than PaperOrchestra's rule, which lets one axis drop when another
- * rises as much: here any drop on any axis reverts the revision. An axis
- * missing from either review is a failed review, never a pass.
+ * rises as much: here any drop on any axis reverts the revision, unless a
+ * blind comparison overturns it (see comparePairwise). An axis missing from
+ * either review is a failed review, never a pass.
  */
 export function compareScores(prev: ReadonlyMap<string, number>, curr: ReadonlyMap<string, number>): ScoreComparison {
 	const lines: string[] = [];
@@ -172,6 +179,119 @@ export function compareScores(prev: ReadonlyMap<string, number>, curr: ReadonlyM
 		const mark = b < a ? "DROPPED" : b > a ? "up" : "same";
 		lines.push(`${axis}: ${a} -> ${b} (${mark})`);
 		if (b < a && verdict === "keep") verdict = "revert";
+	}
+	return { verdict, lines };
+}
+
+/**
+ * Headings whose section a blind copy drops: the drafter's revision log says
+ * which version is the newer one. Both spellings, since drafts are written in
+ * the vault's language.
+ */
+const REVEALING = /^(#{1,6})\s+(?:revision log|journal des r[ée]visions)\b/i;
+
+/**
+ * A draft as a comparer may see it: no frontmatter (its dates tell the order)
+ * and no revision log. Everything else is kept as written.
+ */
+export function blindCopy(text: string): string {
+	let body = text.replace(/^\uFEFF/, "");
+	const fm = /^---\r?\n[\s\S]*?\r?\n---[ \t]*(?:\r?\n|$)/.exec(body);
+	if (fm) body = body.slice(fm[0].length);
+	const out: string[] = [];
+	let skipLevel = 0;
+	let fenced = false;
+	for (const line of body.split(/\r?\n/)) {
+		if (/^\s*(```|~~~)/.test(line)) fenced = !fenced;
+		const h = fenced ? null : /^(#{1,6})\s/.exec(line);
+		if (h?.[1]) {
+			const level = h[1].length;
+			if (skipLevel > 0 && level <= skipLevel) skipLevel = 0;
+			const r = REVEALING.exec(line);
+			if (skipLevel === 0 && r?.[1]) skipLevel = r[1].length;
+		}
+		if (skipLevel === 0) out.push(line);
+	}
+	return `${out.join("\n").trim()}\n`;
+}
+
+export type Preference = "version-1" | "version-2" | "tie";
+
+/** Comparison lines are `- <axis>: version-1 | version-2 | tie` under a `## Comparison` heading. */
+export function parseComparison(text: string): Map<string, Preference | "unknown"> {
+	const prefs = new Map<string, Preference | "unknown">();
+	let inside = false;
+	for (const line of withoutFences(text)) {
+		if (/^#{1,6}\s/.test(line)) {
+			inside = /^##\s+(?:Comparison|Comparaison)\s*$/i.test(line);
+			continue;
+		}
+		if (!inside) continue;
+		const m = /^\s*[-*]\s+\**([a-z][a-z0-9-]*)\**\s*:\**\s*(.+)$/i.exec(line);
+		if (!m?.[1] || !m[2]) continue;
+		const v = fold(m[2]).replace(/[`*]/g, "").trim();
+		const pref: Preference | "unknown" = /^version[- ]?1\b/.test(v)
+			? "version-1"
+			: /^version[- ]?2\b/.test(v)
+				? "version-2"
+				: /^(?:tie|egalite)\b/.test(v)
+					? "tie"
+					: "unknown";
+		prefs.set(m[1].toLowerCase(), pref);
+	}
+	return prefs;
+}
+
+type Side = "previous" | "current" | "tie";
+
+/** Order 1 shows the previous version as Version 1; order 2 shows the current one first. */
+function side(pref: Preference, order: 1 | 2): Side {
+	if (pref === "tie") return "tie";
+	const first: Side = order === 1 ? "previous" : "current";
+	const second: Side = order === 1 ? "current" : "previous";
+	return pref === "version-1" ? first : second;
+}
+
+/**
+ * Arbitrates a score drop with two blind comparisons of the same pair, one in
+ * each order. The revision is kept only if the previous version wins on no
+ * axis in either order. A verdict that flips with the order was decided by
+ * position, not content, so it does not rescue the revision.
+ */
+export function comparePairwise(
+	order1: ReadonlyMap<string, Preference | "unknown">,
+	order2: ReadonlyMap<string, Preference | "unknown">,
+): ScoreComparison {
+	if (order1.size === 0 || order2.size === 0) {
+		return { verdict: "invalid", lines: [`no "## Comparison" section found in the order-${order1.size === 0 ? 1 : 2} comparison`] };
+	}
+	const lines: string[] = [];
+	let verdict: ScoreVerdict = "keep";
+	for (const axis of new Set([...order1.keys(), ...order2.keys()])) {
+		const a = order1.get(axis);
+		const b = order2.get(axis);
+		if (a === undefined || b === undefined) {
+			lines.push(`${axis}: missing from the order-${a === undefined ? 1 : 2} comparison`);
+			verdict = "invalid";
+			continue;
+		}
+		if (a === "unknown" || b === "unknown") {
+			lines.push(`${axis}: unreadable preference in the order-${a === "unknown" ? 1 : 2} comparison`);
+			verdict = "invalid";
+			continue;
+		}
+		const s1 = side(a, 1);
+		const s2 = side(b, 2);
+		const sides = new Set([s1, s2]);
+		const mark = sides.has("previous")
+			? sides.has("current")
+				? "FLIPS WITH THE ORDER"
+				: "PREVIOUS PREFERRED"
+			: sides.has("current")
+				? "current preferred"
+				: "tie";
+		lines.push(`${axis}: order 1 ${s1}, order 2 ${s2} (${mark})`);
+		if (sides.has("previous") && verdict === "keep") verdict = "revert";
 	}
 	return { verdict, lines };
 }

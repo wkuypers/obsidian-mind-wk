@@ -38,9 +38,8 @@ Compiling turns sources into pages that explain a concept in their own words and
      aliases: ["<title>", <other names the sources use>]
      status: llm-draft
      confidence: high | medium | low
-     verified: YYYY-MM-DD
      ```
-     `created` and `date` are set once, at creation. On an update, keep them, extend `sources`, reassess `confidence` and set `verified` to today.
+     `created` and `date` are set once, at creation. On an update, keep them, extend `sources` and reassess `confidence`. Never add or change `verified`: compiling a page is not checking it (`wiki/README.md` §3).
    - **Confidence**: exactly the criteria of `wiki/README.md` §3 (primary and secondary sources). Judge the sources yourself, not their own claims about their reliability. On an update, `confidence` changes only as shown in the approved plan.
    - **Tags**: reuse the vault's existing tags (`git grep -h -A3 '^tags:' -- '*.md'` shows them); a new tag only when none fits, and the report names it.
    - **Body**, in the vault's language:

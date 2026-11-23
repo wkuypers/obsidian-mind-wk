@@ -1,6 +1,6 @@
 # llm-wiki — license
 
-The `wiki/` layer (`wiki/README.md`) and the `om-wiki-*` commands adapt ideas and conventions of llm-wiki (https://github.com/nvk/llm-wiki, commit 95a042c68998559305bc69ac8c482c4e1a415ad3, 2026-10-02): immutable raw sources, source-to-concept compilation with a `## Sources` section, thesis mode, page-level confidence, and lint. llm-wiki implements Andrej Karpathy's "LLM Wiki" idea. Its license follows, verbatim.
+The `wiki/` layer (`wiki/README.md`) and the `om-wiki-*` commands adapt ideas and conventions of llm-wiki (https://github.com/nvk/llm-wiki, commit d60674ff785e5c6d35322657d7839a7c0bdd3ca7, 2026-10-25): immutable raw sources, source-to-concept compilation with a `## Sources` section, thesis mode, page-level confidence, and lint. llm-wiki implements Andrej Karpathy's "LLM Wiki" idea. Its license follows, verbatim.
 
 ```
 MIT License

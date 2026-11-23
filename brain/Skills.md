@@ -90,7 +90,7 @@ An LLM-compiled layer confined to `wiki/`: sources kept unchanged in `wiki/raw/`
 
 ### Research Dossier
 
-Builds one folder under `work/active/` from the vault's notes, stopping for the user's validation between stages. Architecture transposed from PaperOrchestra (arXiv:2604.05018): a plan before any prose, a closed citation register, and a revision kept only when no reviewer's score drops. Checks: `.claude/scripts/dossier-check.ts`.
+Builds one folder under `work/active/` from the vault's notes, stopping for the user's validation between stages. Architecture transposed from PaperOrchestra (arXiv:2604.05018), with conventions of its code adapted since 2026-11-24: a plan before any prose that searches a frame and, per section, the positions to confront; a closed citation register; reviewer scores capped by observable defects; and a revision kept only when no reviewer's score drops, or when a blind comparison in both orders shows the drop was noise. Checks: `.claude/scripts/dossier-check.ts`.
 
 | Command | Purpose |
 |---------|---------|

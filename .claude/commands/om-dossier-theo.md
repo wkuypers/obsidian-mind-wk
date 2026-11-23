@@ -3,9 +3,11 @@ description: "Build a research dossier in theology of ministries from the vault'
 argument-hint: "<research question> | resume <dossier folder>"
 ---
 
+<!-- Adapts the pipeline and the side-by-side arbitration in both orders of PaperOrchestra (https://github.com/google-research/paper-orchestra), Apache License 2.0, Copyright 2026 Google LLC; rewritten, see the license file for what changed. Full license: .claude/licenses/paper-orchestra.md -->
+
 # /om-dossier-theo
 
-A dossier assistant, not an author. It gathers, verifies, structures and criticises; the thesis stays the user's. The architecture transposes PaperOrchestra (arXiv:2604.05018): raw materials kept apart from drafting, a plan before any prose, a closed citation register, and revisions kept only when no reviewer's score drops.
+A dossier assistant, not an author. It gathers, verifies, structures and criticises; the thesis stays the user's. The architecture transposes PaperOrchestra (arXiv:2604.05018): raw materials kept apart from drafting, a plan before any prose, a closed citation register, and revisions kept only when no reviewer's score drops — or when a blind comparison in both orders shows the drop was noise.
 
 **Read first, and let them win over this file**: `AGENTS.md`, then `.claude/rules/local.md` if it exists. A vault may fix there the dossier's note names, its library rules, and principles every plan must honour.
 
@@ -33,9 +35,10 @@ One folder per question: `work/active/<Subject>/`, where `<Subject>` is a short 
 | `<Subject> — verified citations` | `verificateur-citations` only | the closed register |
 | `<Subject> — draft_<section>` | `redacteur-theo` | one note per section |
 | `<Subject> — review_round <n>_<reviewer>` | each reviewer | critique and scores |
+| `<Subject> — comparison_round <n>_<reviewer>_order <k>` | a reviewer, in comparison mode | which of two blind versions does better, axis by axis |
 | `<Subject> — journal` | this command | every step, decision, stop and resume point |
 
-Name the suffixes in the language of the vault's notes. Use the vault's work-note template for frontmatter (`date`, `description`, `tags` at least) and link every note to the `question` note and to `work/Index.md`'s entry.
+Name the suffixes in the language of the vault's notes. Working copies that are not notes — a draft as it stood before a revision, the blind copies a comparison reads — go in `.claude/dossier-work/<Subject>/`, which git ignores. Use the vault's work-note template for frontmatter (`date`, `description`, `tags` at least) and link every note to the `question` note and to `work/Index.md`'s entry.
 
 ## The register
 
@@ -57,19 +60,22 @@ Log every step in the journal as it ends: date, agent, file written, what it rep
 
 1. **Open the dossier.** Resolve the question from `$ARGUMENTS`; without one, ask. Create the folder, the `question` note and the journal. With `resume <folder>`, read the journal and continue from its last completed step.
 2. **Plan**: run `plan-theo`. ⏸ **Stop: show the plan, wait for the user.**
-3. **Sources**: run `sources-primaires` and `litterature-secondaire` in parallel, each with the validated plan.
+3. **Sources**: run `sources-primaires` and `litterature-secondaire` in parallel, each with the validated plan. `litterature-secondaire` runs the plan's frame and position queries before its own, and reports, position by position, whether the supposed limit was documented, contradicted or left untested.
 4. **Register**: run `verificateur-citations` on both files and on the plan's leads.
 5. **Collation**: the agents reach only the vault and the open web. Take the register's "To verify" list and settle what you can with what only this session has — a reference manager, a document database, a mounted library, a Bible server — reading only, never writing in them. Report each result to `verificateur-citations`, which alone updates the register. What still cannot be settled stays `(TBC)`. ⏸ **Stop: show the register's counts by status, the `(TBC)` entries and the sources that could not be reached. Wait.**
 6. **Draft**: run `redacteur-theo` section by section. After each section, run the check below; a failed check goes back to the drafter, never forward. ⏸ **Stop before any review: show the draft. Wait.**
 7. **Review loop**, three rounds at most:
    - run the three reviewers in parallel on the current draft, each in its own context, with the draft, the register and the primary sources — never the drafter's reasoning;
+   - copy the draft as it stands to `.claude/dossier-work/<Subject>/<draft file name> — round <n>.md`: it is the version to restore;
    - give the drafter the three critiques; it revises and logs what it changed;
-   - run the reviewers again and compare scores with the check below;
-   - **a revision is kept only if no axis drops, for any reviewer.** Otherwise restore the previous version at once and stop the loop;
+   - run the reviewers again and compare each reviewer's scores with `scores`;
+   - **no axis dropped, for any reviewer: keep the revision.**
+   - **an axis dropped**: a one-point move on a four-point scale may be noise, so the drop is arbitrated. Make the blind copies with `blind` (out-dir `.claude/dossier-work/<Subject>/blind <section> round <n>`), then run each reviewer whose score dropped twice in comparison mode, each run in its own context — once on `order-1`, once on `order-2` — and decide with `pairwise`. **The revision is kept only if the previous version wins on no axis in either order.** Otherwise restore the copy at once and stop the loop. A verdict that flips with the order was decided by position, not content: it does not rescue the revision;
+   - an exit 2 from `scores` or `pairwise` is a failed review or comparison: run it again, never read it as a pass;
    - stop too when the reviewers list no weakness left.
 8. ⏸ **Final stop**: report what holds, what stays `(TBC)`, what the reviewers still contest, what could not be reached.
 
-**Cost.** A gathering agent uses on the order of two hundred thousand tokens; a first run to the register used about nine hundred thousand. The review loop runs three reviewers and a drafter up to three times per section: say so, and say which sections you mean to draft, before step 6.
+**Cost.** A gathering agent uses on the order of two hundred thousand tokens; a first run to the register used about nine hundred thousand. The review loop runs three reviewers and a drafter up to three times per section, and each arbitrated drop adds two runs of the reviewer concerned: say so, and say which sections you mean to draft, before step 6.
 
 Never trust an agent's report on its own: open the file it says it wrote. If a report comes back empty or cut short, message the same agent again and ask for the report in prose, without quoting raw frontmatter.
 
@@ -78,9 +84,11 @@ Never trust an agent's report on its own: open the file it says it wrote. If a r
 ```bash
 node --experimental-strip-types .claude/scripts/dossier-check.ts citations "<register>" "<draft>" ["<draft>"…]
 node --experimental-strip-types .claude/scripts/dossier-check.ts scores "<review round n-1>" "<review round n>"
+node --experimental-strip-types .claude/scripts/dossier-check.ts blind "<draft before the revision>" "<draft after it>" "<out-dir>"
+node --experimental-strip-types .claude/scripts/dossier-check.ts pairwise "<comparison, order 1>" "<comparison, order 2>"
 ```
 
-`citations` exits 0 only if every footnote of every draft is a citable register key, and every `exists-only` citation shows `(TBC)`. `scores` exits 0 only if no axis dropped; it exits 2 when an axis is missing from either file, which is a failed review, not a pass.
+`citations` exits 0 only if every footnote of every draft is a citable register key, and every `exists-only` citation shows `(TBC)`. `scores` exits 0 only if no axis dropped; it exits 2 when an axis is missing from either file, which is a failed review, not a pass. `blind` writes `order-1/` (the previous version as `Version 1.md`) and `order-2/` (the current one first), each copy without frontmatter or revision log, so nothing but position tells the versions apart; it exits 2 when the two read the same. `pairwise` exits 0 only if the previous version wins on no axis in either order, 1 otherwise, 2 when an axis is missing or unreadable.
 
 ## What this command never does
 

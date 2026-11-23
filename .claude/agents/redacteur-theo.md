@@ -57,7 +57,7 @@ Frontmatter as the vault's work notes require; wikilinks to the authors and conc
 
 ## On a revision
 
-Answer each weakness in the text itself, not in a letter. A critique that asks for a source the dossier does not have is not ignored and not papered over: it goes under "Limits". Then append a `## Revision log — round <n>` listing, critique by critique, what you changed, what you declined and why.
+Answer each weakness in the text itself, not in a letter. A critique that asks for a source the dossier does not have is not ignored and not papered over: it goes under "Limits". Then append a section headed exactly `## Revision log — round <n>`, in English whatever the vault's language, listing critique by critique what you changed, what you declined and why. A script removes that section before the reviewers compare two versions; under another heading it would tell them which version is newer.
 
 ## Final report
 

@@ -82,7 +82,9 @@ views:
       and:
         - type != "source"
         - status != "rejected"
-        - formula.unchecked_days > 365
+        - or:
+            - '!verified'
+            - formula.unchecked_days > 365
     order:
       - file.name
       - confidence

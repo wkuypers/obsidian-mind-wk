@@ -58,6 +58,11 @@ node_modules/
 # the calling session decides whether any of it is worth a memory.
 .claude/om-reasoning/
 
+# /om-dossier-theo working copies: a draft as it stood before a revision, and
+# the blind copies a comparison reads. Not notes — the review and comparison
+# notes in the dossier record what was decided.
+.claude/dossier-work/
+
 # The empty MCP config `reason` spawns against — the recursion guard. Runtime
 # plumbing, created when absent. The glob also covers the `.tmp` sibling it is
 # created through, which a crash between write and claim can leave behind.
