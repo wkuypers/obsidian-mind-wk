@@ -69,7 +69,7 @@ Read the vault, write only to `syntheses/` — dated sections appended, never a 
 | `/om-synthesize` | Agreements, contradictions, dated claims and gaps on a topic — contradictions attributed, never resolved |
 | `/om-challenge` | Argue against a thesis or decision from the vault's own decisions, failures and opposing positions |
 | `/om-panel` | Four independent readings of a question, then where they agree and split |
-| `/om-research` | Key-less bibliographic search (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; BnF, SUDOC and K10plus catalogues for books; ERIC and Europe PMC by field) for the gap with what the vault holds; updates proposed, never applied |
+| `/om-research` | Key-less bibliographic search (OpenAlex, Crossref with Cairn/OpenEdition/Érudit, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar, arXiv; BnF, SUDOC and K10plus catalogues for books; ERIC and Europe PMC by field) for the gap with what the vault holds, in sub-questions planned from the vault and a first search, merged, sorted and answered with cited findings; `--deep` adds a second round; updates proposed, never applied |
 | `/om-emerge` | Recurring themes, implicit conclusions and emerging directions in recent notes |
 | `/om-connect` | Bridges and crossing ideas between two distant domains, through the link graph |
 | `/om-discover` | Three to five next directions from ideas left hanging, open questions and orphan notes, with a stated ranking |

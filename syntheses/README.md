@@ -51,3 +51,5 @@ git grep -l -i --untracked -e '<keyword>' -- '*.md' ':!syntheses' ':!.claude' ':
 ## Credits
 
 These commands adapt commands of [obsidian-second-brain](https://github.com/eugeniughelbur/obsidian-second-brain) by Eugeniu Ghelbur (commit `f79c64f3`, 2026-10-28), MIT License, Copyright (c) 2026 Eugeniu Ghelbur. The full license text is in `.claude/licenses/obsidian-second-brain.md`. Adaptations: no `index.md`, `log.md`, daily note or AI-first preamble; no page is ever rewritten; output confined to `syntheses/`; search through qmd and git grep instead of the original scripts; `/om-contradictions` checks its quotes inline instead of with `verify_quotes.py`; no API keys.
+
+`/om-research` also adapts the research loop of [GPT Researcher](https://github.com/assafelovic/gpt-researcher) (commit `9d39a2f8`, 2026-11-23), Apache License 2.0: sub-questions planned from a first search, a merge without duplicates, source curation, cited findings and the deep mode. The license text and the list of changes are in `.claude/licenses/gpt-researcher.md`.

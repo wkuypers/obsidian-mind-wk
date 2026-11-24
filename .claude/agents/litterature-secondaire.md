@@ -39,7 +39,7 @@ Follow `syntheses/README.md` §2: keyword (BM25) search through qmd, **only** `s
 
 1. **The vault first.** Reading notes, bibliographies, author notes, full texts. This is the baseline; outside research only fills its gaps.
 2. **The plan's queries before your own.** Run the frame queries once, then each section's queries on its positions, as written — adapted only to each database's syntax — in the vault, then outside. Add your own formulations after them, never instead of them.
-3. **Then outside, key-less.** Use the sources and the exact calls listed in `.claude/commands/om-research.md` step 4 (OpenAlex, Crossref and its French-language publisher prefixes, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar), with `curl -s`. Send nothing but search terms. Two or three formulations per query, one in German and one in English when the debate is led in those languages.
+3. **Then outside, key-less.** Use the sources and the exact calls listed in the **Databases** section of `.claude/commands/om-research.md` (OpenAlex, Crossref and its French-language publisher prefixes, HAL, ISIDORE, Persée, theses.fr, DOAJ, Semantic Scholar), with `curl -s`. Send nothing but search terms. Two or three formulations per query, one in German and one in English when the debate is led in those languages.
 4. **Propose what you cannot query.** IxTheo, the *Elenchus bibliographicus* of the ETL, Cairn, library catalogues that block scripts: do not work around them. Give the search URL for the user to open, and say plainly that it was not queried.
 5. **Say what answered.** For every database: answered, empty, refused, or timed out.
 
